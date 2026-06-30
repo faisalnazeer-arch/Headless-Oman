@@ -130,7 +130,7 @@ const dict = {
     "collection.no_products": "No products match your filters",
     "collection.load_more": "Load More Products",
     "collection.all_loaded": "products loaded",
-    "collection.price_range": "Price (AED)",
+    "collection.price_range": "Price (OMR)",
     "collection.shop_origin": "Shop by Origin",
     "collection.shop_cuts": "Shop by Cuts",
     "collection.read_more": "Read More ↓",

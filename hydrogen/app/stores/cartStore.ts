@@ -218,7 +218,7 @@ function extractAutomaticDiscounts(cartDiscountAllocations: any[]): AutomaticDis
       alloc.__typename === "CartCustomDiscountAllocation" ||
       (alloc.title && !alloc.code);
     if (!isNamed || !alloc.title) continue;
-    const prev = map.get(alloc.title) ?? { amount: 0, currencyCode: alloc.discountedAmount?.currencyCode ?? "AED" };
+    const prev = map.get(alloc.title) ?? { amount: 0, currencyCode: alloc.discountedAmount?.currencyCode ?? "OMR" };
     map.set(alloc.title, {
       amount: prev.amount + parseFloat(alloc.discountedAmount?.amount ?? "0"),
       currencyCode: prev.currencyCode,
@@ -386,8 +386,8 @@ async function fetchGiftVariantData(variantId: string): Promise<Partial<CartItem
           productType: "",
           availableForSale: true,
           priceRange: {
-            minVariantPrice: { amount: "0", currencyCode: "AED" },
-            maxVariantPrice: { amount: "0", currencyCode: "AED" },
+            minVariantPrice: { amount: "0", currencyCode: "OMR" },
+            maxVariantPrice: { amount: "0", currencyCode: "OMR" },
           },
           images: imgUrl
             ? { edges: [{ node: { url: imgUrl, altText: imgAlt } }] }
@@ -447,8 +447,8 @@ function makeGiftItem(variantId: string): CartItem {
         descriptionHtml: "", tags: [], vendor: "", productType: "",
         availableForSale: true,
         priceRange: {
-          minVariantPrice: { amount: "0", currencyCode: "AED" },
-          maxVariantPrice: { amount: "0", currencyCode: "AED" },
+          minVariantPrice: { amount: "0", currencyCode: "OMR" },
+          maxVariantPrice: { amount: "0", currencyCode: "OMR" },
         },
         images: { edges: [] },
         variants: { edges: [] },
@@ -457,7 +457,7 @@ function makeGiftItem(variantId: string): CartItem {
     } as ShopifyProduct,
     variantId,
     variantTitle: "Free Gift",
-    price: { amount: "0.00", currencyCode: "AED" },
+    price: { amount: "0.00", currencyCode: "OMR" },
     quantity: 1,
     selectedOptions: [],
     isPending: false,
@@ -899,7 +899,7 @@ export const useCartStore = create<CartStore>()(
             try {
               const items = get().items;
               const cartTotal = items.reduce((n, i) => n + parseFloat(i.price.amount) * i.quantity, 0);
-              const currency = items[0]?.price.currencyCode ?? "AED";
+              const currency = items[0]?.price.currencyCode ?? "OMR";
               const res = await fetch(
                 `/api/discount-check?code=${encodeURIComponent(trimmed)}&cartTotal=${cartTotal}&currency=${currency}`
               );

@@ -166,7 +166,7 @@ export function CartDrawer() {
   // This is what's shown as "Subtotal". Compare-at (original) prices are already shown
   // as strikethrough on each line item, so we don't repeat them in the totals section.
   const localSubtotal = items.reduce((n, i) => n + parseFloat(i.price.amount) * i.quantity, 0);
-  const currency = items[0]?.price.currencyCode ?? "AED";
+  const currency = items[0]?.price.currencyCode ?? "OMR";
   const shopifyCurrency = totalAmount?.currencyCode ?? subtotalAmount?.currencyCode ?? currency;
   const displayCurrency = shopifyCurrency;
 
@@ -212,7 +212,7 @@ export function CartDrawer() {
     // GTM dataLayer — begin_checkout
     pushDataLayer("begin_checkout", {
       ecommerce: {
-        currency: items[0]?.price?.currencyCode ?? "AED",
+        currency: items[0]?.price?.currencyCode ?? "OMR",
         value: optimisticTotal,
         items: items.map((i) => gaItem({
           id: (i.product as any)?.handle ?? i.variantId,

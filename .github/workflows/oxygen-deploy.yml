@@ -1,0 +1,49 @@
+name: Deploy to Oxygen
+
+# Oman storefront (Hydrogen storefront id 1000153258).
+# Branch → Oxygen environment routing is configured in the Hydrogen admin
+# (Storefront → Environments → link a branch to each environment):
+#   main    → Production
+#   staging → Staging
+# Pull requests create temporary preview deployments.
+#
+# Oxygen auto-injects all PUBLIC_*/PRIVATE_*/SESSION_SECRET vars per environment,
+# so the only secret this workflow needs is the storefront deployment token.
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  deployments: write
+  pull-requests: write
+
+jobs:
+  deploy:
+    name: Deploy to Shopify Oxygen
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: hydrogen/package-lock.json
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+        working-directory: hydrogen
+
+      - name: Build & deploy to Oxygen
+        run: npx shopify hydrogen deploy
+        working-directory: hydrogen
+        env:
+          SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN: ${{ secrets.SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN }}

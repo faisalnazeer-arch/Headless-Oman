@@ -2,7 +2,7 @@ import type { LoaderFunctionArgs } from "@shopify/remix-oxygen";
 
 // Parent sitemap index — links to the per-resource child sitemaps (EN + AR), mirroring the
 // Shopify theme's structure. Each child is generated live by routes/sitemap-resource.tsx.
-const SITE_URL = "https://mlsuae.ae";
+const SITE_URL = "https://mls.om";
 
 const CHILD_SITEMAPS = [
   "/sitemap_products.xml",

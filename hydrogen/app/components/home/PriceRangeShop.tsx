@@ -133,7 +133,7 @@ function PriceTileCard({ tile }: { tile: PriceTile }) {
             {tile.priceAmount}
           </span>
           <span className="ml-0.5 text-[8px] font-semibold uppercase tracking-wide text-muted-foreground/50 transition-colors duration-300 group-hover:text-white/60 md:text-[9px]">
-            AED
+            OMR
           </span>
         </div>
 

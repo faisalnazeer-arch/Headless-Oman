@@ -7,7 +7,7 @@ import { detectLanguage } from "../lib/locale";
 import { applyArImages } from "../lib/arImages";
 
 export const meta: MetaFunction = () => [
-  { title: "MLS Gourmet Butcher Shops — MLS UAE" },
+  { title: "MLS Gourmet Butcher Shops — MLS Oman" },
   { name: "description", content: "Visit our premium MLS Gourmet Butcher Shops across Dubai and Abu Dhabi." },
 ];
 

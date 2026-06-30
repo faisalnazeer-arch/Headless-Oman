@@ -6,21 +6,21 @@ import { detectLanguage } from "../lib/locale";
 import { applyArImages } from "../lib/arImages";
 
 export const meta: MetaFunction = () => [
-  { title: "Contact Us — MLS UAE" },
-  { name: "description", content: "Reach MLS UAE — Premium halal meat delivered. Call, WhatsApp or email us 9 AM to 10 PM daily." },
-  { tagName: "link", rel: "canonical", href: "https://mlsuae.ae/pages/contact" },
+  { title: "Contact Us — MLS Oman" },
+  { name: "description", content: "Reach MLS Oman — Premium halal meat delivered. Call, WhatsApp or email us 9 AM to 10 PM daily." },
+  { tagName: "link", rel: "canonical", href: "https://mls.om/pages/contact" },
   { "script:ld+json": {
     "@context": "https://schema.org",
     "@type": "ContactPage",
-    name: "Contact MLS UAE",
-    url: "https://mlsuae.ae/pages/contact",
-    description: "Reach MLS UAE by phone, WhatsApp or email. We're available 9 AM to 10 PM daily.",
+    name: "Contact MLS Oman",
+    url: "https://mls.om/pages/contact",
+    description: "Reach MLS Oman by phone, WhatsApp or email. We're available 9 AM to 10 PM daily.",
     mainEntity: {
       "@type": "Organization",
-      name: "MLS UAE",
-      url: "https://mlsuae.ae",
-      telephone: "+971504516403",
-      email: "info@mlsuae.ae",
+      name: "MLS Oman",
+      url: "https://mls.om",
+      telephone: "+96892423242",
+      email: "contactus@mls.om",
       address: {
         "@type": "PostalAddress",
         streetAddress: "Marasi Drive, Business Bay",
@@ -64,7 +64,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     heroSubtitle: fields.hero_subtitle?.value ?? "Questions about your order, custom cuts, or bulk buying? Our team responds within the hour.",
     heroImage:    fields.hero_image?.reference?.image?.url ?? null,
     phone:        fields.phone?.value         ?? "+971 50 451 6403",
-    email:        fields.email?.value         ?? "contactus@mlsuae.ae",
+    email:        fields.email?.value         ?? "contactus@mls.om",
     hours:        fields.hours?.value         ?? "9 AM – 10 PM",
     hoursSub:     fields.hours_sub?.value     ?? "All days of the week",
     addressLine1: fields.address_line1?.value ?? "E-09, Light Industrial Unit 6",

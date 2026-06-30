@@ -14,10 +14,10 @@ import type { FooterSettings, FooterLink } from "~/root";
 const DEFAULTS = {
   companyName:    "M L S FOODSTUFF TRADING LLC",
   address:        "Marasi Drive, Business Bay\nP.O.Box 93770\nDubai, United Arab Emirates",
-  phone:          "+971504516403",
-  email:          "contactus@mlsuae.ae",
+  phone:          "+96892423242",
+  email:          "contactus@mls.om",
   contactHeading: "Contact Us",
-  copyright:      "MLS UAE. All rights reserved.",
+  copyright:      "MLS Oman. All rights reserved.",
   newsletterTitle:    "Want discounts?",
   newsletterSubtitle: "Subscribe to our newsletter and get 10% off your first purchase!",
 };
@@ -124,7 +124,7 @@ function BrandCol({ contact }: { contact: ContactData }) {
     <div className="min-w-[240px] max-w-[300px] flex-1">
       {/* Logo */}
       <div className="mb-4">
-        <img src={logo} alt="MLS UAE" className="h-14 w-auto brightness-0 invert" />
+        <img src={logo} alt="MLS Oman" className="h-14 w-auto brightness-0 invert" />
       </div>
       {/* Company name */}
       <p className="text-sm font-bold text-white">{contact.companyName}</p>

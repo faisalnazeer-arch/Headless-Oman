@@ -214,12 +214,10 @@ const ADMIN_FOOTER_QUERY = `
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const INTERNAL_HOSTS = new Set([
-  'mls-uae.myshopify.com',
-  'mlsuae.ae',
-  'www.mlsuae.ae',
-  'mlsuaestaging.com',
-  'www.mlsuaestaging.com',
-  'hydrogen-lovable-48c64f68e36675c8b8e2.o2.myshopify.dev',
+  'muscat-livestock.myshopify.com',
+  'mls.om',
+  'www.mls.om',
+  // TODO: add the Oman Oxygen preview host (e.g. oman-stagging-xxxx.o2.myshopify.dev) once known.
 ]);
 function toPath(u: string): string {
   try {
@@ -583,7 +581,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {/* Site-wide social tags (match the live site). The real page title and per-page
             og:title/description/image come from each route's meta via <Meta/> below.
             (No hardcoded <title> here — it would duplicate the route title.) */}
-        <meta property="og:site_name" content="MLS UAE" />
+        <meta property="og:site_name" content="MLS Oman" />
         <meta property="og:locale" content={locale === "ar" ? "ar_AR" : "en_US"} />
         <meta name="twitter:card" content="summary_large_image" />
         <Meta />
@@ -611,11 +609,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: `(function(){function L(){(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","o54b753gku");}if("requestIdleCallback"in window){requestIdleCallback(L,{timeout:3000});}else{setTimeout(L,2500);}})();` }} />
         {/* PushOwl + Brevo — web push notifications */}
         {/* Shim window.Shopify so PushOwl can identify the store in headless mode */}
-        <script dangerouslySetInnerHTML={{ __html: `window.Shopify=window.Shopify||{};window.Shopify.shop=window.Shopify.shop||'mls-uae.myshopify.com';` }} />
+        <script dangerouslySetInnerHTML={{ __html: `window.Shopify=window.Shopify||{};window.Shopify.shop=window.Shopify.shop||'muscat-livestock.myshopify.com';` }} />
         {/* PushOwl/Brevo — deferred to idle (guaranteed to load via the timeout fallback) */}
         <script dangerouslySetInnerHTML={{ __html: `(function(){function L(){var s=document.createElement("script");s.async=true;s.src="https://cdn.shopify.com/extensions/00bb358e-e093-46ce-a5ef-3b66f0295001/pushowl-brevo-email-push-sms-82/assets/pushowl-shopify.js";document.head.appendChild(s);}if("requestIdleCallback"in window){requestIdleCallback(L,{timeout:4000});}else{setTimeout(L,3000);}})();` }} />
         {/* Snowball — affiliate / referral tracking (identifies the store via the shop param) */}
-        <script async src="https://api.socialsnowball.io/js/referral.js?shop=mls-uae.myshopify.com" />
+        <script async src="https://api.socialsnowball.io/js/referral.js?shop=muscat-livestock.myshopify.com" />
       </head>
       <body>
         {/* Google Tag Manager (noscript) */}
@@ -863,7 +861,7 @@ export function ErrorBoundary() {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <title>{is404 ? "Page Not Found — MLS UAE" : "Something went wrong — MLS UAE"}</title>
+        <title>{is404 ? "Page Not Found — MLS Oman" : "Something went wrong — MLS Oman"}</title>
         <link rel="stylesheet" href={styles} />
         <Links />
         {/* Restore lang/dir from cookie so Arabic users see RTL even on error pages */}

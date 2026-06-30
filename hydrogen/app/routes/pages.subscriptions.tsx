@@ -6,7 +6,7 @@ import { detectLanguage } from "../lib/locale";
 import { applyArImages } from "../lib/arImages";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => [
-  { title: `${data?.page?.heroTitle ?? "Subscriptions"} — MLS UAE` },
+  { title: `${data?.page?.heroTitle ?? "Subscriptions"} — MLS Oman` },
   { name: "description", content: data?.page?.heroSubtitle ?? "Subscribe & Save up to 15% on every MLS order." },
 ];
 

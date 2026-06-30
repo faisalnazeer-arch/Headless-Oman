@@ -1033,7 +1033,7 @@ export function ProductPageShell({
   const [isAdding, setIsAdding] = useState(false);
 
   const variant = variants.find((v: any) => v.id === selectedVariantId) ?? variants[0];
-  const currency = variant?.price.currencyCode ?? "AED";
+  const currency = variant?.price.currencyCode ?? "OMR";
 
   const selectedAllocation = selectedPlanId
     ? (variant as any)?.sellingPlanAllocations?.nodes?.find((a: any) => a.sellingPlan?.id === selectedPlanId)
@@ -1164,7 +1164,7 @@ export function ProductPageShell({
     "@context": "https://schema.org", "@type": "Product",
     name: product.title,
     image: images[0]?.url ?? "",
-    brand: { "@type": "Brand", name: product.vendor ?? "MLS UAE" },
+    brand: { "@type": "Brand", name: product.vendor ?? "MLS Oman" },
     offers: {
       "@type": "Offer",
       price: displayPrice?.amount ?? "0",
@@ -1570,7 +1570,7 @@ export function ProductPageShell({
               <ul className="space-y-1.5 text-xs text-muted-foreground sm:space-y-2 sm:text-sm">
                 {(pageSettings?.supportContent
                   ? pageSettings.supportContent.split("\n").filter(Boolean)
-                  : ["Call or WhatsApp: +971504516403", "Support available 9 AM – 9 PM daily.", "Email: contactus@mlsuae.ae", "Hassle-free returns within 24 hours of delivery."]
+                  : ["Call or WhatsApp: +96892423242", "Support available 9 AM – 9 PM daily.", "Email: contactus@mls.om", "Hassle-free returns within 24 hours of delivery."]
                 ).map((line, i) => (
                   <li key={i}><LinkifyLine text={line} /></li>
                 ))}
@@ -1739,7 +1739,7 @@ export function ProductPageShell({
         {externalId ? (
           <JudgemeWidgetEmbed
             externalId={externalId}
-            shopDomain="mls-uae.myshopify.com"
+            shopDomain="muscat-livestock.myshopify.com"
           />
         ) : (
           <JudgemeReviews reviews={reviews} rating={rating} totalCount={reviewsTotalCount} handle={product.handle} externalId={undefined} />

@@ -172,7 +172,7 @@ function parseReelItems(
       poster = video.previewImage?.url ?? video.preview?.image?.url ?? poster;
     }
 
-    const price = (product && priceMap[product.id]) ?? { amount: "0", currencyCode: "AED" };
+    const price = (product && priceMap[product.id]) ?? { amount: "0", currencyCode: "OMR" };
 
     reels.push({
       id: node.id,
@@ -434,9 +434,9 @@ function parseCollectionSectionConfig(nodes: any[]): { heading: string; subHeadi
 const HOME_JSON_LD = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "MLS UAE",
-  url: "https://mlsuae.ae",
-  logo: "https://mlsuae.ae/cdn/shop/files/logo_97c8d848-b3ec-4a82-a68e-dcedc161529c.png?v=1711022728",
+  name: "MLS Oman",
+  url: "https://mls.om",
+  logo: "https://mls.om/cdn/shop/files/logo_97c8d848-b3ec-4a82-a68e-dcedc161529c.png?v=1711022728",
   description: "Premium halal meats — Wagyu, Angus, lamb and more — delivered within 1 hour across Dubai, 2 hours across Abu Dhabi.",
   address: {
     "@type": "PostalAddress",
@@ -446,13 +446,13 @@ const HOME_JSON_LD = {
   },
   contactPoint: {
     "@type": "ContactPoint",
-    telephone: "+971504516403",
+    telephone: "+96892423242",
     contactType: "customer service",
     availableLanguage: ["English", "Arabic"],
   },
   sameAs: [
-    "https://www.instagram.com/mlsuae",
-    "https://www.facebook.com/mlsuae",
+    "https://www.instagram.com/mls.om",
+    "https://www.facebook.com/muscatlivestock",
   ],
   aggregateRating: {
     "@type": "AggregateRating",
@@ -465,10 +465,10 @@ const HOME_JSON_LD = {
 const LOCAL_BUSINESS_JSON_LD = {
   "@context": "https://schema.org",
   "@type": "FoodEstablishment",
-  name: "MLS UAE — Fresh Meat Delivery",
-  url: "https://mlsuae.ae",
-  image: "https://mlsuae.ae/cdn/shop/files/logo_97c8d848-b3ec-4a82-a68e-dcedc161529c.png?v=1711022728",
-  telephone: "+971504516403",
+  name: "MLS Oman — Fresh Meat Delivery",
+  url: "https://mls.om",
+  image: "https://mls.om/cdn/shop/files/logo_97c8d848-b3ec-4a82-a68e-dcedc161529c.png?v=1711022728",
+  telephone: "+96892423242",
   priceRange: "AED 50 - AED 500",
   servesCuisine: "Halal Meat",
   address: {
@@ -500,26 +500,26 @@ const LOCAL_BUSINESS_JSON_LD = {
 const WEBSITE_JSON_LD = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "MLS UAE",
-  url: "https://mlsuae.ae",
+  name: "MLS Oman",
+  url: "https://mls.om",
   potentialAction: {
     "@type": "SearchAction",
-    target: "https://mlsuae.ae/search?q={search_term_string}",
+    target: "https://mls.om/search?q={search_term_string}",
     "query-input": "required name=search_term_string",
   },
 };
 
 export const meta: MetaFunction = () => [
-  { title: "Fresh meat delivered in 1-hour slots until 8:45 PM - MLS UAE" },
+  { title: "Fresh meat delivered in 1-hour slots until 8:45 PM - MLS Oman" },
   { name: "description", content: "Fresh premium meat delivered within 1 hour across Dubai & Abu Dhabi. Order halal beef, lamb, chicken & more with fast, hygienic doorstep delivery." },
   { property: "og:type", content: "website" },
-  { property: "og:title", content: "Fresh meat delivered in 1-hour slots until 8:45 PM - MLS UAE" },
+  { property: "og:title", content: "Fresh meat delivered in 1-hour slots until 8:45 PM - MLS Oman" },
   { property: "og:description", content: "Fresh premium meat delivered within 1 hour across Dubai & Abu Dhabi. Order halal beef, lamb, chicken & more with fast, hygienic doorstep delivery." },
-  { property: "og:url", content: "https://mlsuae.ae/" },
-  { property: "og:image", content: "https://mlsuae.ae/cdn/shop/files/logo_97c8d848-b3ec-4a82-a68e-dcedc161529c.png?v=1711022728" },
+  { property: "og:url", content: "https://mls.om/" },
+  { property: "og:image", content: "https://mls.om/cdn/shop/files/logo_97c8d848-b3ec-4a82-a68e-dcedc161529c.png?v=1711022728" },
   { property: "og:image:width", content: "1080" },
   { property: "og:image:height", content: "1080" },
-  { tagName: "link", rel: "canonical", href: "https://mlsuae.ae/" },
+  { tagName: "link", rel: "canonical", href: "https://mls.om/" },
   { "script:ld+json": HOME_JSON_LD },
   { "script:ld+json": WEBSITE_JSON_LD },
   { "script:ld+json": LOCAL_BUSINESS_JSON_LD },

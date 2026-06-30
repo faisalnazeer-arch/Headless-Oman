@@ -2,8 +2,8 @@
 // Token + domain are public (storefront-scoped) and bundled into the client.
 
 export const SHOPIFY_API_VERSION = "2025-07";
-export const SHOPIFY_STORE_PERMANENT_DOMAIN = "mls-uae.myshopify.com";
-export const SHOPIFY_STOREFRONT_TOKEN = "97f0e5324d0396262b6df834040c123e";
+export const SHOPIFY_STORE_PERMANENT_DOMAIN = "muscat-livestock.myshopify.com";
+export const SHOPIFY_STOREFRONT_TOKEN = "f400e415d38fee8b926f72b54b5fed9d";
 export const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 
 export async function storefrontApiRequest<T = any>(
@@ -307,10 +307,13 @@ export function getOriginFromProduct(tags: string[] = [], title = ""): string | 
   return null;
 }
 
-export function formatPrice(amount: string | number, currency = "AED"): string {
+// OMR (and KWD/BHD) are 3-decimal currencies; most others are 2.
+const THREE_DECIMAL_CURRENCIES = new Set(["OMR", "KWD", "BHD"]);
+export function formatPrice(amount: string | number, currency = "OMR"): string {
   const n = typeof amount === "string" ? parseFloat(amount) : amount;
-  if (Number.isNaN(n)) return `${currency} 0`;
-  return `${currency} ${n.toFixed(2)}`;
+  const decimals = THREE_DECIMAL_CURRENCIES.has(currency) ? 3 : 2;
+  if (Number.isNaN(n)) return `${currency} ${(0).toFixed(decimals)}`;
+  return `${currency} ${n.toFixed(decimals)}`;
 }
 
 export function shopifyImageUrl(url: string, width: number): string {

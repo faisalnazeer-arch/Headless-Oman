@@ -29,7 +29,7 @@ export function SubscriptionSelector({
   selectedPlanId,
   onSelect,
   regularPrice = "0",
-  currency = "AED",
+  currency = "OMR",
   className,
   planPrices = {},
 }: SubscriptionSelectorProps) {

@@ -38,7 +38,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => [
-  { title: `${data?.blog?.title ?? "Blog"} — MLS UAE` },
+  { title: `${data?.blog?.title ?? "Blog"} — MLS Oman` },
 ];
 
 function formatDate(iso: string) {

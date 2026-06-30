@@ -5,18 +5,18 @@ import { detectLanguage } from "../lib/locale";
 import { applyArImages } from "../lib/arImages";
 
 export const meta: MetaFunction = () => [
-  { title: "FAQs — MLS UAE" },
-  { name: "description", content: "Find answers to the most common questions about MLS UAE — delivery, halal certification, custom cuts, and more." },
-  { tagName: "link", rel: "canonical", href: "https://mlsuae.ae/pages/faqs" },
+  { title: "FAQs — MLS Oman" },
+  { name: "description", content: "Find answers to the most common questions about MLS Oman — delivery, halal certification, custom cuts, and more." },
+  { tagName: "link", rel: "canonical", href: "https://mls.om/pages/faqs" },
   { "script:ld+json": {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    name: "MLS UAE — Frequently Asked Questions",
-    url: "https://mlsuae.ae/pages/faqs",
+    name: "MLS Oman — Frequently Asked Questions",
+    url: "https://mls.om/pages/faqs",
     mainEntity: [
       { "@type": "Question", name: "How fast is delivery in Dubai?", acceptedAnswer: { "@type": "Answer", text: "We deliver fresh meat within 1 hour across Dubai, 7 days a week until 8:45 PM." } },
       { "@type": "Question", name: "Do you deliver to Abu Dhabi?", acceptedAnswer: { "@type": "Answer", text: "Yes, we deliver to Abu Dhabi within 2 hours for same-day orders placed before 8:45 PM." } },
-      { "@type": "Question", name: "Is MLS UAE meat halal certified?", acceptedAnswer: { "@type": "Answer", text: "Yes, all our meat is 100% halal certified from accredited slaughterhouses." } },
+      { "@type": "Question", name: "Is MLS Oman meat halal certified?", acceptedAnswer: { "@type": "Answer", text: "Yes, all our meat is 100% halal certified from accredited slaughterhouses." } },
       { "@type": "Question", name: "What is the minimum order?", acceptedAnswer: { "@type": "Answer", text: "There is no minimum order. Free delivery on orders above AED 350." } },
       { "@type": "Question", name: "Do you deliver to Sharjah and Ajman?", acceptedAnswer: { "@type": "Answer", text: "Yes, we offer same-day delivery across Sharjah and Ajman for orders placed before 8:45 PM." } },
     ],

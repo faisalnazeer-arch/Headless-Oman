@@ -5,15 +5,15 @@ import { Clock, Truck, MapPin, CheckCircle2, Package, RefreshCw } from "lucide-r
 import { detectLanguage } from "../lib/locale";
 
 export const meta: MetaFunction = () => [
-  { title: "Delivery Info — MLS UAE" },
+  { title: "Delivery Info — MLS Oman" },
   { name: "description", content: "Same-day delivery across Dubai, Abu Dhabi, Sharjah and Ajman. 1-hour slot delivery until 8:45 PM in Dubai." },
-  { tagName: "link", rel: "canonical", href: "https://mlsuae.ae/pages/delivery-info" },
+  { tagName: "link", rel: "canonical", href: "https://mls.om/pages/delivery-info" },
   { "script:ld+json": {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "MLS UAE Meat Delivery",
-    url: "https://mlsuae.ae/pages/delivery-info",
-    provider: { "@type": "Organization", name: "MLS UAE", url: "https://mlsuae.ae" },
+    name: "MLS Oman Meat Delivery",
+    url: "https://mls.om/pages/delivery-info",
+    provider: { "@type": "Organization", name: "MLS Oman", url: "https://mls.om" },
     serviceType: "Food Delivery",
     areaServed: [
       { "@type": "City", name: "Dubai" },
@@ -24,7 +24,7 @@ export const meta: MetaFunction = () => [
     description: "Fresh delivery within 1 hour across Dubai, 2 hours across Abu Dhabi, same-day across Sharjah and Ajman. Order before 8:45 PM.",
     offers: {
       "@type": "Offer",
-      priceCurrency: "AED",
+      priceCurrency: "OMR",
       price: "0",
       description: "Free delivery on orders above AED 350",
     },

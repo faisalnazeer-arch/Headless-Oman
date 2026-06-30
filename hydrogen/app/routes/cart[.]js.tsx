@@ -26,7 +26,7 @@ export async function loader({ context }: LoaderFunctionArgs) {
       item_count: items.reduce((sum: number, i: any) => sum + i.quantity, 0),
       items,
       total_price: total,
-      currency: cart?.cost?.totalAmount?.currencyCode ?? "AED",
+      currency: cart?.cost?.totalAmount?.currencyCode ?? "OMR",
     }),
     { headers: { "Content-Type": "application/json" } }
   );

@@ -382,7 +382,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
-    { title: data?.page?.seo?.title ?? data?.page?.title ?? "MLS UAE" },
+    { title: data?.page?.seo?.title ?? data?.page?.title ?? "MLS Oman" },
     { name: "description", content: data?.page?.seo?.description ?? "" },
   ];
 };

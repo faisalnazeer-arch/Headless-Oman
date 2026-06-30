@@ -258,17 +258,17 @@ function CollectionDescription({ html }: { html: string }) {
 export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
   const seo = (data?.collection as any)?.seo;
   // Prefer the Shopify SEO fields (Search engine listing), fall back to the collection's own title/description.
-  const title = seo?.title?.trim() || `${data?.collection?.title ?? "Collection"} — MLS UAE`;
+  const title = seo?.title?.trim() || `${data?.collection?.title ?? "Collection"} — MLS Oman`;
   const description = seo?.description?.trim() || data?.collection?.description || "";
   const image = (data?.collection as any)?.image?.url as string | undefined;
-  const canonical = `https://mlsuae.ae${location.pathname}`;
+  const canonical = `https://mls.om${location.pathname}`;
 
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://mlsuae.ae/" },
-      { "@type": "ListItem", position: 2, name: "Collections", item: "https://mlsuae.ae/collections" },
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://mls.om/" },
+      { "@type": "ListItem", position: 2, name: "Collections", item: "https://mls.om/collections" },
       { "@type": "ListItem", position: 3, name: data?.collection?.title ?? "Collection", item: canonical },
     ],
   };
@@ -280,7 +280,7 @@ export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
     description,
     url: canonical,
     ...(image ? { image } : {}),
-    provider: { "@type": "Organization", name: "MLS UAE", url: "https://mlsuae.ae" },
+    provider: { "@type": "Organization", name: "MLS Oman", url: "https://mls.om" },
   };
 
   return [
@@ -615,8 +615,8 @@ function FilterPanel({ groups, appliedFilters, onToggleFacet, globalMax, priceMa
           className="w-full accent-crimson"
         />
         <div className="mt-1 flex justify-between text-xs text-muted-foreground">
-          <span>AED 0</span>
-          <span className="font-medium text-foreground">AED {priceMax}</span>
+          <span>OMR 0</span>
+          <span className="font-medium text-foreground">OMR {priceMax}</span>
         </div>
       </FilterSection>
 

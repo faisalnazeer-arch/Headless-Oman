@@ -340,7 +340,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   // Strategy 2: try the Globo app-proxy JSON endpoint as fallback.
   // Both run for every product so all templates get Globo options.
   // Fetch Globo options by scraping the LIVE store's product page HTML.
-  // We try the custom domain first (mlsuae.ae) because that's where the Shopify
+  // We try the custom domain first (mls.om) because that's where the Shopify
   // theme with Globo is actually running. The myshopify subdomain may serve a
   // password page or a Globo-less version of the HTML.
   // Globo HTML scrape — capped at 1 200 ms total so it never blocks SSR.
@@ -579,17 +579,17 @@ export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
   const product = data?.product;
   // Use Shopify SEO fields first (set in Admin → product → Search engine listing)
   const title = product?.seo?.title?.trim()
-    || (product?.title ? `Buy ${product.title} Online in Dubai & Abu Dhabi - MLS UAE` : "MLS UAE — Fresh Meat Delivery in Dubai & Abu Dhabi");
+    || (product?.title ? `Buy ${product.title} Online in Dubai & Abu Dhabi - MLS Oman` : "MLS Oman — Fresh Meat Delivery in Dubai & Abu Dhabi");
   const description = (product?.seo?.description?.trim()
     || product?.description
     || "Premium halal meat delivered across UAE.").slice(0, 160);
   const image = product?.images?.edges?.[0]?.node?.url ?? product?.images?.nodes?.[0]?.url;
-  const canonical = `https://mlsuae.ae${location.pathname}`;
+  const canonical = `https://mls.om${location.pathname}`;
 
   const variants = product?.variants?.nodes ?? product?.variants?.edges?.map((e: any) => e.node) ?? [];
   const firstVariant = variants[0];
   const price = firstVariant?.price?.amount ?? product?.priceRange?.minVariantPrice?.amount ?? "0";
-  const currency = firstVariant?.price?.currencyCode ?? product?.priceRange?.minVariantPrice?.currencyCode ?? "AED";
+  const currency = firstVariant?.price?.currencyCode ?? product?.priceRange?.minVariantPrice?.currencyCode ?? "OMR";
   const inStock = product?.availableForSale !== false;
 
   const jsonLd = {
@@ -599,7 +599,7 @@ export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
     description,
     url: canonical,
     ...(image ? { image: [image] } : {}),
-    brand: { "@type": "Brand", name: "MLS UAE" },
+    brand: { "@type": "Brand", name: "MLS Oman" },
     offers: variants.length
       ? variants.map((v: any) => ({
           "@type": "Offer",

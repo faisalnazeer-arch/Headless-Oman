@@ -4,7 +4,7 @@ import type { LoaderFunctionArgs } from "@shopify/remix-oxygen";
 // /sitemap_<type>.xml and /ar/sitemap_<type>.xml; it reads the path to decide the locale
 // (en/ar) and resource type (products | collections | pages | blogs). AR product/collection/
 // blog URLs use the same handles under the /ar prefix (Hydrogen serves them via @inContext).
-const SITE_URL = "https://mlsuae.ae";
+const SITE_URL = "https://mls.om";
 
 const PRODUCTS_QUERY = `#graphql
   query SitemapProducts($first: Int!, $after: String) {

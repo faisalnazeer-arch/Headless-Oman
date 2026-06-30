@@ -9,7 +9,7 @@ import { detectLanguage } from "../lib/locale";
 import { applyArImages } from "../lib/arImages";
 
 export const meta: MetaFunction = () => [
-  { title: "Refer a Friend — MLS UAE" },
+  { title: "Refer a Friend — MLS Oman" },
   { name: "description", content: "Refer a friend to MLS and earn rewards." },
 ];
 

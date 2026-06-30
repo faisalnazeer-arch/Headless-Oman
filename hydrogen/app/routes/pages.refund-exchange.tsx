@@ -5,8 +5,8 @@ import { detectLanguage } from "../lib/locale";
 import { applyArImages } from "../lib/arImages";
 
 export const meta: MetaFunction = () => [
-  { title: "Refund & Exchange Policy — MLS UAE" },
-  { name: "description", content: "Learn about MLS UAE's 100% money back guarantee, refund and exchange policy." },
+  { title: "Refund & Exchange Policy — MLS Oman" },
+  { name: "description", content: "Learn about MLS Oman's 100% money back guarantee, refund and exchange policy." },
 ];
 
 const REFUND_QUERY = `
@@ -53,8 +53,8 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     heroImage:       f.hero_image?.reference?.image?.url ?? null,
     shareTitle:      f.share_title?.value      ?? "Share with Us",
     shareDesc:       f.share_description?.value ?? "",
-    shareEmail:      f.share_email?.value       ?? "contactus@mlsuae.ae",
-    shareWhatsapp:   f.share_whatsapp?.value    ?? "+971504516403",
+    shareEmail:      f.share_email?.value       ?? "contactus@mls.om",
+    shareWhatsapp:   f.share_whatsapp?.value    ?? "+96892423242",
     guaranteeTitle:  f.guarantee_title?.value   ?? "How does our 100% money back guarantee work?",
     step1Label:      f.step_1_label?.value      ?? "Email / Message",
     step1Desc:       f.step_1_desc?.value       ?? "",

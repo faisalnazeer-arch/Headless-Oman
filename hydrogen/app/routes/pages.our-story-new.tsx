@@ -15,7 +15,7 @@ function clean(s: string): string {
 }
 
 export const meta: MetaFunction = () => [
-  { title: "Our Story — MLS UAE" },
+  { title: "Our Story — MLS Oman" },
   { name: "description", content: "45 years of butchery excellence. From Oman to the UAE." },
 ];
 
@@ -176,7 +176,7 @@ function HeroSection({ image, quote }: { image: string; quote: string }) {
         <div className="max-w-2xl pb-5 md:pb-7">
           {/* Badge */}
           <span className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/15 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-gold/90">
-            MLS UAE · Est. 1977
+            MLS Oman · Est. 1977
           </span>
           <h1 className="font-display text-2xl font-extrabold uppercase leading-tight tracking-tight text-white drop-shadow-sm md:text-3xl lg:text-[2.6rem]">
             {quote}
@@ -519,7 +519,7 @@ function VideoSection({ embed, text }: { embed: string; text: string }) {
         {text && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-6">
             <div className="text-center">
-              <Eyebrow label="MLS UAE" light center />
+              <Eyebrow label="MLS Oman" light center />
               <p
                 className="mt-3 font-display font-black uppercase leading-tight text-white drop-shadow"
                 style={{ fontSize: "clamp(1.1rem, 3.5vw, 2.8rem)", maxWidth: 680 }}

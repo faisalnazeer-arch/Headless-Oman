@@ -57,7 +57,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code")?.trim().toUpperCase();
   const cartTotal = parseFloat(url.searchParams.get("cartTotal") ?? "0");
-  const currency = url.searchParams.get("currency") ?? "AED";
+  const currency = url.searchParams.get("currency") ?? "OMR";
 
   if (!code) {
     return Response.json({ reason: null });

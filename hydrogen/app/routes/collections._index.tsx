@@ -2,8 +2,8 @@ import type { LoaderFunctionArgs, MetaFunction } from "@shopify/remix-oxygen";
 import { useLoaderData, Link } from "react-router";
 
 export const meta: MetaFunction = () => [
-  { title: "All Collections — MLS UAE" },
-  { name: "description", content: "Browse all meat collections at MLS UAE — beef, lamb, wagyu, burgers and more." },
+  { title: "All Collections — MLS Oman" },
+  { name: "description", content: "Browse all meat collections at MLS Oman — beef, lamb, wagyu, burgers and more." },
 ];
 
 const COLLECTIONS_QUERY = `#graphql

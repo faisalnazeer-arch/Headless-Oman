@@ -1,8 +1,8 @@
 import type { LoaderFunctionArgs } from "@shopify/remix-oxygen";
 
-const PRODUCTION_HOST = "mlsuae.ae";
+const PRODUCTION_HOST = "mls.om";
 
-const PRODUCTION_ROBOTS = `# MLS UAE headless storefront
+const PRODUCTION_ROBOTS = `# MLS Oman headless storefront
 
 User-agent: *
 Disallow: /a/downloads/-/*
@@ -46,7 +46,7 @@ Disallow: /recommendations/products
 Disallow: /*/recommendations/products
 Disallow: /apps/
 Disallow: /api/
-Sitemap: https://mlsuae.ae/sitemap.xml
+Sitemap: https://mls.om/sitemap.xml
 
 User-agent: adsbot-google
 Disallow: /checkouts/
@@ -100,7 +100,7 @@ Disallow: /search
 Disallow: /apple-app-site-association
 Disallow: /.well-known/shopify/monorail
 Disallow: /cdn/wpm/*.js
-Sitemap: https://mlsuae.ae/sitemap.xml
+Sitemap: https://mls.om/sitemap.xml
 
 User-agent: AhrefsSiteAudit
 Crawl-delay: 10
@@ -139,7 +139,7 @@ Disallow: /search
 Disallow: /apple-app-site-association
 Disallow: /.well-known/shopify/monorail
 Disallow: /cdn/wpm/*.js
-Sitemap: https://mlsuae.ae/sitemap.xml
+Sitemap: https://mls.om/sitemap.xml
 
 User-agent: MJ12bot
 Crawl-delay: 10

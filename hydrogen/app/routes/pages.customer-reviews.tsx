@@ -6,15 +6,15 @@ import type { JudgemeReview } from "~/lib/judgeme";
 import { cn } from "~/lib/utils";
 import { StarRating } from "~/components/reviews/StarRating";
 export const meta: MetaFunction = () => [
-  { title: "Customer Reviews — MLS UAE" },
-  { name: "description", content: "Read genuine customer reviews for MLS UAE. Over 7000 verified buyers share their experience." },
-  { tagName: "link", rel: "canonical", href: "https://mlsuae.ae/pages/customer-reviews" },
+  { title: "Customer Reviews — MLS Oman" },
+  { name: "description", content: "Read genuine customer reviews for MLS Oman. Over 7000 verified buyers share their experience." },
+  { tagName: "link", rel: "canonical", href: "https://mls.om/pages/customer-reviews" },
   { "script:ld+json": {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "MLS UAE Customer Reviews",
-    url: "https://mlsuae.ae/pages/customer-reviews",
-    description: "Verified customer reviews for MLS UAE — premium halal meat delivery in Dubai, Abu Dhabi and UAE.",
+    name: "MLS Oman Customer Reviews",
+    url: "https://mls.om/pages/customer-reviews",
+    description: "Verified customer reviews for MLS Oman — premium halal meat delivery in Dubai, Abu Dhabi and UAE.",
   }},
 ];
 
@@ -85,7 +85,7 @@ const METAFIELD_QUERY = `{
 
 export async function loader({ context }: LoaderFunctionArgs) {
   const { env } = context as any;
-  const shopDomain = env?.PUBLIC_STORE_DOMAIN ?? "mls-uae.myshopify.com";
+  const shopDomain = env?.PUBLIC_STORE_DOMAIN ?? "muscat-livestock.myshopify.com";
   const apiToken   = env?.JUDGEME_API_TOKEN ?? "";
 
   // Fetch metafields for count/rating/histogram and REST API reviews in parallel
@@ -224,7 +224,7 @@ export default function CustomerReviewsPage() {
             {/* CTA + medals */}
             <div className="flex shrink-0 flex-col items-center gap-3">
               <a
-                href="https://judge.me/stores/mls-uae.myshopify.com/reviews/new"
+                href="https://judge.me/stores/muscat-livestock.myshopify.com/reviews/new"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-5 py-3 text-sm font-bold text-amber-900 transition-colors hover:bg-amber-300"

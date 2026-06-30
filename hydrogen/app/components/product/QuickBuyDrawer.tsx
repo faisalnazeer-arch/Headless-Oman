@@ -141,7 +141,7 @@ export function QuickBuyDrawer() {
   // Compute display price
   const regularPrice = matched?.price ?? node?.priceRange?.minVariantPrice;
   const regularAmt = parseFloat(regularPrice?.amount ?? "0");
-  const currency = regularPrice?.currencyCode ?? "AED";
+  const currency = regularPrice?.currencyCode ?? "OMR";
 
   const allPlans = sellingPlanGroups.flatMap((g) => g.plans);
   const activePlan = allPlans.find((p) => p.id === selectedPlanId) ?? null;
@@ -157,7 +157,7 @@ export function QuickBuyDrawer() {
 
   const displayPrice = selectedPlanId
     ? { amount: subAmt.toFixed(2), currencyCode: currency }
-    : regularPrice ?? { amount: "0", currencyCode: "AED" };
+    : regularPrice ?? { amount: "0", currencyCode: "OMR" };
 
   const displayCompareAt = selectedPlanId ? regularPrice : matched?.compareAtPrice;
 

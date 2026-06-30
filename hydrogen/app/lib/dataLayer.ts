@@ -30,7 +30,7 @@ function firePixels(event: string, data: Record<string, any>) {
     const items: any[] = Array.isArray(ec.items) ? ec.items : [];
     const ids = items.map((i) => i.item_id).filter(Boolean);
     const value = typeof ec.value === "number" ? ec.value : 0;
-    const currency = ec.currency || "AED";
+    const currency = ec.currency || "OMR";
     const fbContents = items.map((i) => ({ id: i.item_id, quantity: i.quantity || 1 }));
     const ttContents = items.map((i) => ({ content_id: i.item_id, content_type: "product", content_name: i.item_name, quantity: i.quantity || 1, price: i.price || 0 }));
 

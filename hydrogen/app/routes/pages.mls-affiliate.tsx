@@ -296,7 +296,7 @@ export default function AffiliatePage() {
 
 function AffiliateRegisterButton({ formId }: { formId: string }) {
   const openForm = useCallback(() => {
-    const url = `https://app.socialsnowball.io/register-form/mls-uae.myshopify.com/${formId}`;
+    const url = `https://app.socialsnowball.io/register-form/muscat-livestock.myshopify.com/${formId}`;
     const w = 520;
     const h = 760;
     const left = Math.max(0, (window.screen.width - w) / 2);

@@ -3,7 +3,7 @@ import type { LoaderFunctionArgs } from "@shopify/remix-oxygen";
 // Dynamic llms.txt — an overview of the storefront for LLM consumption, mirroring the
 // Yoast-generated file from the Shopify theme but built live from the Storefront API so it
 // never goes stale. Lists pages, recent blog posts, blogs, products and collections.
-const SITE_URL = "https://mlsuae.ae";
+const SITE_URL = "https://mls.om";
 const TITLE = "MLS Premium Meat supplier in UAE | Order Online Butcher";
 const DESCRIPTION =
   "Fresh premium meat delivered within 1 hour across Dubai & Abu Dhabi. Order halal beef, lamb, chicken & more with fast, hygienic doorstep delivery.";

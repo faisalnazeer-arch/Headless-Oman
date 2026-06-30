@@ -5,7 +5,7 @@ import type { LoaderFunctionArgs } from "@shopify/remix-oxygen";
 // routes that path to PushOwl's servers. In headless Oxygen we replicate the proxy here.
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
-  const upstream = `https://mls-uae.myshopify.com/apps/pushowl/sdks/service-worker.js${url.search}`;
+  const upstream = `https://muscat-livestock.myshopify.com/apps/pushowl/sdks/service-worker.js${url.search}`;
 
   try {
     const res = await fetch(upstream, {

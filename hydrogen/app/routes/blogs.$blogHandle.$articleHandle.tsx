@@ -37,7 +37,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   const title = data?.article?.seo?.title ?? data?.article?.title ?? "Article";
   const description = data?.article?.seo?.description ?? data?.article?.excerpt ?? "";
   const image = data?.article?.image?.url;
-  const url = `https://mlsuae.ae/blogs/${data?.blog?.handle ?? "news"}/${data?.article?.handle ?? ""}`;
+  const url = `https://mls.om/blogs/${data?.blog?.handle ?? "news"}/${data?.article?.handle ?? ""}`;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -45,17 +45,17 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     description,
     url,
     datePublished: data?.article?.publishedAt ?? "",
-    author: { "@type": "Organization", name: "MLS UAE", url: "https://mlsuae.ae" },
+    author: { "@type": "Organization", name: "MLS Oman", url: "https://mls.om" },
     publisher: {
       "@type": "Organization",
-      name: "MLS UAE",
-      url: "https://mlsuae.ae",
-      logo: { "@type": "ImageObject", url: "https://mlsuae.ae/cdn/shop/files/logo_97c8d848-b3ec-4a82-a68e-dcedc161529c.png?v=1711022728" },
+      name: "MLS Oman",
+      url: "https://mls.om",
+      logo: { "@type": "ImageObject", url: "https://mls.om/cdn/shop/files/logo_97c8d848-b3ec-4a82-a68e-dcedc161529c.png?v=1711022728" },
     },
     ...(image ? { image: [image] } : {}),
   };
   return [
-    { title: `${title} — MLS UAE` },
+    { title: `${title} — MLS Oman` },
     { name: "description", content: description },
     { property: "og:type", content: "article" },
     { property: "og:url", content: url },

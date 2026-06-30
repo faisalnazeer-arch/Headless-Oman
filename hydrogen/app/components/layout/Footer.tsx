@@ -12,12 +12,12 @@ import {
 import type { FooterSettings, FooterLink } from "~/root";
 
 const DEFAULTS = {
-  companyName:    "M L S FOODSTUFF TRADING LLC",
-  address:        "Marasi Drive, Business Bay\nP.O.Box 93770\nDubai, United Arab Emirates",
-  phone:          "+96892423242",
+  companyName:    "Muscat Livestock",
+  address:        "SHS Tower - Suite 81, Ghala\nMuscat, Oman",
+  phone:          "+96824026400",
   email:          "contactus@mls.om",
   contactHeading: "Contact Us",
-  copyright:      "MLS Oman. All rights reserved.",
+  copyright:      "Muscat Livestock. All rights reserved.",
   newsletterTitle:    "Want discounts?",
   newsletterSubtitle: "Subscribe to our newsletter and get 10% off your first purchase!",
 };

@@ -133,7 +133,7 @@ const LAYOUT_QUERY = `#graphql
   query LayoutData($language: LanguageCode, $country: CountryCode)
   @inContext(language: $language, country: $country) {
 
-    mainMenu: menu(handle: "main-menu-1") {
+    mainMenu: menu(handle: "hydrogen-desktop") {
       items { ...MenuFields }
     }
 
@@ -141,7 +141,7 @@ const LAYOUT_QUERY = `#graphql
       items { ...MenuFields }
     }
 
-    mobileMenu: menu(handle: "main-menu-1") {
+    mobileMenu: menu(handle: "hydrogen-desktop") {
       items { ...MenuFields }
     }
 
@@ -428,7 +428,7 @@ const NAV_EN_HELPER_QUERY = `#graphql
     mobileCategoriesMenu: menu(handle: "mls-mobile-categories") {
       items { id title }
     }
-    mobileMenu: menu(handle: "main-menu-1") {
+    mobileMenu: menu(handle: "hydrogen-desktop") {
       items { id title items { id title } }
     }
     navItemImages: metaobjects(type: "mls_nav_item_image", first: 50) {

@@ -133,7 +133,7 @@ const LAYOUT_QUERY = `#graphql
   query LayoutData($language: LanguageCode, $country: CountryCode)
   @inContext(language: $language, country: $country) {
 
-    mainMenu: menu(handle: "main-menu") {
+    mainMenu: menu(handle: "main-menu-1") {
       items { ...MenuFields }
     }
 
@@ -141,7 +141,7 @@ const LAYOUT_QUERY = `#graphql
       items { ...MenuFields }
     }
 
-    mobileMenu: menu(handle: "mls-mobile-menu") {
+    mobileMenu: menu(handle: "main-menu-1") {
       items { ...MenuFields }
     }
 
@@ -149,11 +149,11 @@ const LAYOUT_QUERY = `#graphql
       items { ...MenuFields }
     }
 
-    footerShop: menu(handle: "footer-shop") {
+    footerShop: menu(handle: "footer") {
       id title items { id title url }
     }
 
-    footerHelp: menu(handle: "footer-help") {
+    footerHelp: menu(handle: "footer-2") {
       id title items { id title url }
     }
 
@@ -428,7 +428,7 @@ const NAV_EN_HELPER_QUERY = `#graphql
     mobileCategoriesMenu: menu(handle: "mls-mobile-categories") {
       items { id title }
     }
-    mobileMenu: menu(handle: "mls-mobile-menu") {
+    mobileMenu: menu(handle: "main-menu-1") {
       items { id title items { id title } }
     }
     navItemImages: metaobjects(type: "mls_nav_item_image", first: 50) {

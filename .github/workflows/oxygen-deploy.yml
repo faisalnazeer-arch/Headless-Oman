@@ -13,13 +13,10 @@ name: Deploy to Oxygen
 on:
   push:
     branches: [main, staging]
-  pull_request:
-    types: [opened, synchronize, reopened]
 
 permissions:
   contents: read
   deployments: write
-  pull-requests: write
 
 jobs:
   deploy:
@@ -42,8 +39,11 @@ jobs:
         run: npm install --legacy-peer-deps
         working-directory: hydrogen
 
+      # --env-branch selects the Oxygen environment whose linked Git branch
+      # matches the current branch (main → Production). Create + link a "staging"
+      # environment in the Hydrogen admin for staging-branch deploys.
       - name: Build & deploy to Oxygen
-        run: npx shopify hydrogen deploy
+        run: npx shopify hydrogen deploy --env-branch "${{ github.ref_name }}"
         working-directory: hydrogen
         env:
           SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN: ${{ secrets.SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN }}

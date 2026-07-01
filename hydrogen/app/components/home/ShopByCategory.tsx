@@ -41,13 +41,13 @@ export function ShopByCategory({ section }: Props) {
 
         <div className="mb-3 text-center md:mb-4">
           <div className="mb-1.5 flex items-center justify-center gap-3">
-            <span className="h-px w-6 rounded-full bg-crimson" />
+            <span className="h-px w-6 rounded-full bg-gradient-brand" />
             <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-crimson">
               {section.eyebrow}
             </span>
-            <span className="h-px w-6 rounded-full bg-crimson" />
+            <span className="h-px w-6 rounded-full bg-gradient-brand" />
           </div>
-          <h2 className="font-display text-2xl font-bold leading-snug tracking-tight text-foreground md:text-3xl">
+          <h2 className="font-display text-2xl font-bold leading-snug tracking-tight text-gradient-brand md:text-3xl">
             {section.heading}
           </h2>
         </div>

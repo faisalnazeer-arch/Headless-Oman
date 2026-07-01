@@ -29,6 +29,40 @@
   animation: announcement-scroll 25s linear infinite;
 }
 
+/* ── Brand gradient utilities (subtle / premium) ────────────────────────── */
+.bg-gradient-brand       { background-image: var(--gradient-brand); }
+.bg-gradient-brand-deep  { background-image: var(--gradient-brand-deep); }
+.bg-gradient-charcoal    { background-image: var(--gradient-charcoal); }
+.text-gradient-brand {
+  background-image: var(--gradient-brand-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+/* Gradient hairline divider */
+.gradient-hairline {
+  height: 1px;
+  border: 0;
+  background-image: linear-gradient(90deg, transparent, var(--crimson) 45%, var(--gold) 50%, var(--crimson) 55%, transparent);
+  opacity: 0.5;
+}
+/* Soft brand glow behind a section/hero */
+.gradient-glow { position: relative; }
+.gradient-glow::before {
+  content: "";
+  position: absolute;
+  inset: -20% 0 auto 0;
+  height: 60%;
+  background-image: radial-gradient(60% 100% at 50% 0%, oklch(0.42 0.20 27 / 0.10), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+/* Premium page wash — barely-there brand tint from the top */
+body {
+  background-image: radial-gradient(1100px 520px at 50% -8%, oklch(0.42 0.20 27 / 0.045), transparent 55%);
+}
+
 /* Simple site-wide link hover transition */
 a { transition: color 0.18s ease, opacity 0.18s ease; }
 
@@ -167,6 +201,13 @@ body.atc-expanded .richpanel-launcher {
   --charcoal-foreground: oklch(0.985 0.005 60);
   --gold: oklch(0.74 0.11 80);               /* #C9A84C */
   --gold-foreground: oklch(0.18 0.01 60);
+
+  /* Brand gradients — subtle / premium (crimson → rich-red, with a gold sweep) */
+  --gradient-brand: linear-gradient(135deg, oklch(0.40 0.19 27) 0%, oklch(0.50 0.21 28) 100%);
+  --gradient-brand-deep: linear-gradient(120deg, oklch(0.27 0.14 27) 0%, oklch(0.40 0.19 27) 55%, oklch(0.50 0.21 28) 100%);
+  --gradient-brand-gold: linear-gradient(120deg, oklch(0.42 0.20 27) 0%, oklch(0.55 0.21 28) 58%, oklch(0.74 0.11 80) 135%);
+  --gradient-charcoal: linear-gradient(160deg, oklch(0.22 0.02 20) 0%, oklch(0.14 0.01 25) 100%);
+  --gradient-sheen: linear-gradient(180deg, oklch(1 0 0 / 0.12), transparent 45%);
 
   /* Semantic */
   --background: var(--off-white);

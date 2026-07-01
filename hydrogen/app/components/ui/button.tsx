@@ -10,14 +10,14 @@ const buttonVariants = cva(
     variants: {
       variant: {
         // ── Brand variants ───────────────────────────────────────────────
-        // Filled crimson — primary CTAs (Add to Cart, Checkout, Subscribe)
-        primary: "bg-crimson text-white hover:bg-rich-red active:bg-rich-red",
+        // Filled crimson gradient — primary CTAs (Add to Cart, Checkout)
+        primary: "bg-gradient-brand text-white shadow-md shadow-crimson/25 transition-all duration-200 hover:shadow-lg hover:shadow-crimson/40 hover:brightness-110 active:brightness-95",
         // Transparent with crimson border — secondary CTAs (Quick View, filters)
         secondary: "border border-crimson bg-transparent text-crimson hover:bg-crimson/5 active:bg-crimson/10",
         // White filled with crimson text — used on dark/image backgrounds
         "white-secondary": "border border-white bg-white text-crimson hover:bg-white/90 active:bg-white/80",
         // ── shadcn defaults (kept for compatibility) ─────────────────────
-        default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+        default: "bg-gradient-brand text-primary-foreground shadow transition-all duration-200 hover:shadow-md hover:brightness-110",
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline: "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
         ghost: "hover:bg-accent hover:text-accent-foreground",

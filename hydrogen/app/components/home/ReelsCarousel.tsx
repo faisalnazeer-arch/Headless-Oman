@@ -32,9 +32,9 @@ export function ReelsCarousel({ reels, label, heading }: { reels: ReelProduct[];
     <section className="container mx-auto px-4 py-3 md:py-6">
       <div className="mb-3 text-center md:mb-4">
         <div className="mb-1.5 flex items-center justify-center gap-3">
-          <span className="h-px w-6 rounded-full bg-crimson" />
+          <span className="h-px w-6 rounded-full bg-gradient-brand" />
           <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-crimson">{resolvedLabel}</p>
-          <span className="h-px w-6 rounded-full bg-crimson" />
+          <span className="h-px w-6 rounded-full bg-gradient-brand" />
         </div>
         <h2 className="font-display text-2xl font-bold leading-snug tracking-tight md:text-3xl">{resolvedHeading}</h2>
       </div>

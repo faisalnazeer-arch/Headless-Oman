@@ -14,11 +14,11 @@ export const meta: MetaFunction = () => [
     name: "MLS Oman — Frequently Asked Questions",
     url: "https://mls.om/pages/faqs",
     mainEntity: [
-      { "@type": "Question", name: "How fast is delivery in Dubai?", acceptedAnswer: { "@type": "Answer", text: "We deliver fresh meat within 1 hour across Dubai, 7 days a week until 8:45 PM." } },
-      { "@type": "Question", name: "Do you deliver to Abu Dhabi?", acceptedAnswer: { "@type": "Answer", text: "Yes, we deliver to Abu Dhabi within 2 hours for same-day orders placed before 8:45 PM." } },
+      { "@type": "Question", name: "How fast is delivery in Muscat?", acceptedAnswer: { "@type": "Answer", text: "We deliver fresh meat within 1–2 hours across Muscat, 7 days a week until 10:00 PM." } },
+      { "@type": "Question", name: "Which areas do you deliver to?", acceptedAnswer: { "@type": "Answer", text: "We currently deliver across Muscat, Oman within 1–2 hours for same-day orders placed before 10:00 PM." } },
       { "@type": "Question", name: "Is MLS Oman meat halal certified?", acceptedAnswer: { "@type": "Answer", text: "Yes, all our meat is 100% halal certified from accredited slaughterhouses." } },
-      { "@type": "Question", name: "What is the minimum order?", acceptedAnswer: { "@type": "Answer", text: "There is no minimum order. Free delivery on orders above AED 350." } },
-      { "@type": "Question", name: "Do you deliver to Sharjah and Ajman?", acceptedAnswer: { "@type": "Answer", text: "Yes, we offer same-day delivery across Sharjah and Ajman for orders placed before 8:45 PM." } },
+      { "@type": "Question", name: "What is the minimum order?", acceptedAnswer: { "@type": "Answer", text: "There is no minimum order. No minimum order value." } },
+      { "@type": "Question", name: "Do you have a minimum order?", acceptedAnswer: { "@type": "Answer", text: "No minimum order value. Our standard delivery fee is OMR 0.890." } },
     ],
   }},
 ];

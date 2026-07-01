@@ -14,7 +14,7 @@ export const meta: MetaFunction = () => [
     "@type": "ItemList",
     name: "MLS Oman Customer Reviews",
     url: "https://mls.om/pages/customer-reviews",
-    description: "Verified customer reviews for MLS Oman — premium halal meat delivery in Dubai, Abu Dhabi and UAE.",
+    description: "Verified customer reviews for MLS Oman — premium halal meat delivery in Muscat, Oman.",
   }},
 ];
 

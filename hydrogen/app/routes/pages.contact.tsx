@@ -23,8 +23,8 @@ export const meta: MetaFunction = () => [
       email: "contactus@mls.om",
       address: {
         "@type": "PostalAddress",
-        streetAddress: "Marasi Drive, Business Bay",
-        addressLocality: "Dubai",
+        streetAddress: "SHS Tower, Suite 81, Ghala",
+        addressLocality: "Muscat",
         addressCountry: "AE",
       },
       openingHours: "Mo-Su 09:00-22:00",
@@ -63,14 +63,14 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     heroTitle:    fields.hero_title?.value    ?? "Get in Touch",
     heroSubtitle: fields.hero_subtitle?.value ?? "Questions about your order, custom cuts, or bulk buying? Our team responds within the hour.",
     heroImage:    fields.hero_image?.reference?.image?.url ?? null,
-    phone:        fields.phone?.value         ?? "+971 50 451 6403",
+    phone:        fields.phone?.value         ?? "+968 92423242",
     email:        fields.email?.value         ?? "contactus@mls.om",
     hours:        fields.hours?.value         ?? "9 AM – 10 PM",
     hoursSub:     fields.hours_sub?.value     ?? "All days of the week",
     addressLine1: fields.address_line1?.value ?? "E-09, Light Industrial Unit 6",
-    addressLine2: fields.address_line2?.value ?? "Dubai Silicon Oasis · Dubai · UAE",
+    addressLine2: fields.address_line2?.value ?? "Ghala · Muscat · Oman",
     whatsappUrl:  fields.whatsapp_url?.value  ?? "https://wa.me/971504516403",
-    mapsUrl:      fields.maps_url?.value      ?? "https://maps.google.com/?q=Dubai+Silicon+Oasis+Dubai+UAE",
+    mapsUrl:      fields.maps_url?.value      ?? "https://maps.google.com/?q=SHS+Tower+Ghala+Muscat+Oman",
   };
 }
 
@@ -268,7 +268,7 @@ export default function ContactPage() {
               <Form method="post" className="flex flex-col gap-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <Field label="Name" name="name" type="text" placeholder="Your full name" required />
-                  <Field label="Phone" name="phone" type="tel" placeholder="+971 50 000 0000" />
+                  <Field label="Phone" name="phone" type="tel" placeholder="+968 9000 0000" />
                 </div>
                 <Field label="Email" name="email" type="email" placeholder="you@email.com" required />
                 <div>

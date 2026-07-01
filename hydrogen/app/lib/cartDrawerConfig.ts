@@ -12,9 +12,9 @@ export interface CartDrawerConfig {
 const DEFAULT_CONFIG: CartDrawerConfig = {
   freeShippingThreshold: 350,
   deliveryItems: [
-    "Fresh delivery within **1 hour** across Dubai, **2 hours** across Abu Dhabi & same-day across Sharjah and Ajman.",
-    "Order before **8:45 PM** for same-day delivery, 7 days a week.",
-    "**Free Shipping** above AED 350",
+    "Express delivery within **1–2 hours** across Muscat, Oman.",
+    "Order before **10:00 PM** for same-day delivery, 7 days a week.",
+    "**Free Shipping** above OMR 35",
   ],
   freeGiftSubVariantId: "gid://shopify/ProductVariant/48766692720956",
   freeGiftCarVariantId: "gid://shopify/ProductVariant/48650846765372",

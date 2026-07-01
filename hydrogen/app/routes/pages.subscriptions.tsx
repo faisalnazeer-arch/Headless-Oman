@@ -194,7 +194,7 @@ export default function SubscriptionsPage() {
               )}
             </div>
             <div className="mt-5 flex flex-wrap gap-5">
-              {["🥩 Free Ribeye every order", "🚚 Free delivery AED 100+", "✅ Cancel anytime"].map((t) => (
+              {["🥩 Free Ribeye every order", "🚚 Free delivery OMR 10+", "✅ Cancel anytime"].map((t) => (
                 <span key={t} className="text-xs text-white/85">{t}</span>
               ))}
             </div>

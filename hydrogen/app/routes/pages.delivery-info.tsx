@@ -6,7 +6,7 @@ import { detectLanguage } from "../lib/locale";
 
 export const meta: MetaFunction = () => [
   { title: "Delivery Info — MLS Oman" },
-  { name: "description", content: "Same-day delivery across Dubai, Abu Dhabi, Sharjah and Ajman. 1-hour slot delivery until 8:45 PM in Dubai." },
+  { name: "description", content: "Express delivery within 1–2 hours across Muscat, Oman. No minimum order value; standard delivery fee OMR 0.890." },
   { tagName: "link", rel: "canonical", href: "https://mls.om/pages/delivery-info" },
   { "script:ld+json": {
     "@context": "https://schema.org",
@@ -16,17 +16,14 @@ export const meta: MetaFunction = () => [
     provider: { "@type": "Organization", name: "MLS Oman", url: "https://mls.om" },
     serviceType: "Food Delivery",
     areaServed: [
-      { "@type": "City", name: "Dubai" },
-      { "@type": "City", name: "Abu Dhabi" },
-      { "@type": "City", name: "Sharjah" },
-      { "@type": "City", name: "Ajman" },
+      { "@type": "City", name: "Muscat" },
     ],
-    description: "Fresh delivery within 1 hour across Dubai, 2 hours across Abu Dhabi, same-day across Sharjah and Ajman. Order before 8:45 PM.",
+    description: "Express delivery within 1–2 hours across Muscat. Order before 10 PM for same-day delivery.",
     offers: {
       "@type": "Offer",
       priceCurrency: "OMR",
       price: "0",
-      description: "Free delivery on orders above AED 350",
+      description: "No minimum order value",
     },
   }},
 ];
@@ -59,53 +56,53 @@ const ADMIN_QUERY = `
 const FALLBACK_CITIES = [
   {
     id: "dubai",
-    label: "Dubai",
+    label: "Muscat",
     emoji: "🏙️",
-    cutoff: "8:45 PM",
+    cutoff: "10:00 PM",
     window: "1-hour slots",
-    hours: "10 AM – 8:45 PM, all days",
-    fee: "AED 15",
+    hours: "10 AM – 10:00 PM, all days",
+    fee: "OMR 0.890",
     notes: [
-      "Delivered in 1-hour slots across all Dubai areas",
-      "Order anytime up to 8:45 PM for same-day delivery",
+      "Express delivery within 1–2 hours across all Muscat areas",
+      "Order anytime up to 10:00 PM for same-day delivery",
       "No minimum order value",
       "Deliveries continue until 10:30 PM",
     ],
   },
   {
     id: "abudhabi",
-    label: "Abu Dhabi",
+    label: "Muscat",
     emoji: "🌴",
-    cutoff: "8:45 PM",
+    cutoff: "10:00 PM",
     window: "2 hours",
-    hours: "10 AM – 8:45 PM, all days",
-    fee: "AED 20",
+    hours: "10 AM – 10:00 PM, all days",
+    fee: "OMR 0.890",
     notes: [
-      "Express 2-hour delivery across Abu Dhabi",
-      "Order anytime up to 8:45 PM for same-day delivery",
+      "Express delivery across Muscat",
+      "Order anytime up to 10:00 PM for same-day delivery",
       "No minimum order value",
       "Deliveries continue until 10:30 PM",
     ],
   },
   {
     id: "sharjah",
-    label: "Sharjah & Ajman",
+    label: "Muscat",
     emoji: "🏡",
     cutoff: "1:00 PM",
     window: "Same day",
     hours: "Confirm before 1:00 PM",
-    fee: "AED 15",
+    fee: "OMR 0.890",
     notes: [
       "Same-day delivery when ordered before 1:00 PM",
       "No minimum order value",
       "Order after 1:00 PM = next-day delivery",
-      "Delivery across Sharjah and Ajman areas",
+      "Delivery across all Muscat areas",
     ],
   },
 ];
 
 const FALLBACK_FAQS = [
-  { id: "f1", q: "Is there a minimum order?", a: "No minimum order value. Our standard delivery fee is AED 15. Free delivery on orders above AED 350." },
+  { id: "f1", q: "Is there a minimum order?", a: "No minimum order value. Our standard delivery fee is OMR 0.890. No minimum order value." },
   { id: "f2", q: "Do I need to tip my driver?", a: "There's no need to tip — we pay our delivery team a living wage that doesn't depend on tips." },
   { id: "f3", q: "How is my meat packaged?", a: "All orders are packed in insulated boxes using sustainable MULTIVAC packaging to maintain freshness during transit." },
   { id: "f4", q: "What if I'm not home?", a: "Our drivers will attempt to call you. You can leave delivery instructions in your order notes or reschedule." },
@@ -206,7 +203,7 @@ export default function DeliveryInfoPage() {
           {[
             { icon: Clock, text: "1-hour slot delivery" },
             { icon: Package, text: "Insulated cold-chain packaging" },
-            { icon: MapPin, text: "Dubai, Abu Dhabi & Sharjah/Ajman" },
+            { icon: MapPin, text: "Muscat, Oman" },
           ].map(({ icon: Icon, text }) => (
             <div key={text} className="flex items-center gap-2 text-sm font-medium text-foreground">
               <Icon className="h-4 w-4 text-crimson" />

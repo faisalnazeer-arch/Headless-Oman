@@ -6,7 +6,7 @@ import type { LoaderFunctionArgs } from "@shopify/remix-oxygen";
 const SITE_URL = "https://mls.om";
 const TITLE = "MLS Premium Meat supplier in UAE | Order Online Butcher";
 const DESCRIPTION =
-  "Fresh premium meat delivered within 1 hour across Dubai & Abu Dhabi. Order halal beef, lamb, chicken & more with fast, hygienic doorstep delivery.";
+  "Fresh premium meat delivered within 1–2 hours across Muscat. Order halal beef, lamb, chicken & more with fast, hygienic doorstep delivery.";
 
 const QUERY = `#graphql
   query LlmsTxt {

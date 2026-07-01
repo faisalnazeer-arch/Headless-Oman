@@ -22,7 +22,7 @@ const VALUE_PROPS = [
   { icon: ShieldCheck, label: "100% Halal Certified" },
   { icon: Truck,       label: "Same-Day Delivery" },
   { icon: Star,        label: "Premium Quality Cuts" },
-  { icon: Package,     label: "Value Boxes from AED 50" },
+  { icon: Package,     label: "Value Boxes from OMR 5" },
 ];
 
 export function ValueBoxesBanner({ banner }: Props) {

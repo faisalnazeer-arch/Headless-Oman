@@ -579,7 +579,7 @@ export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
   const product = data?.product;
   // Use Shopify SEO fields first (set in Admin → product → Search engine listing)
   const title = product?.seo?.title?.trim()
-    || (product?.title ? `Buy ${product.title} Online in Dubai & Abu Dhabi - MLS Oman` : "MLS Oman — Fresh Meat Delivery in Dubai & Abu Dhabi");
+    || (product?.title ? `Buy ${product.title} Online in Muscat - MLS Oman` : "MLS Oman — Fresh Meat Delivery in Muscat");
   const description = (product?.seo?.description?.trim()
     || product?.description
     || "Premium halal meat delivered across UAE.").slice(0, 160);

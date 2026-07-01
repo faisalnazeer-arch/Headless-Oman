@@ -369,27 +369,27 @@ function DeliveryTab({ pageSettings }: { pageSettings: PageSettings | undefined 
   type CityBlock = { label: string; body: string };
 
   const DEFAULT_DUBAI: CityBlock[] = [
-    { label: "Delivery Time",         body: "Fresh delivery within 1 hour across Dubai. Order before 8:45 PM for same-day delivery, 7 days a week." },
-    { label: "Last Order Time",       body: "8:45 PM is our last order cutoff, all days of the week." },
-    { label: "Delivery Fee",          body: "No minimum order value. Standard delivery fee is AED 15." },
+    { label: "Delivery Time",         body: "Fresh delivery within 1–2 hours across Muscat. Order before 10:00 PM for same-day delivery, 7 days a week." },
+    { label: "Last Order Time",       body: "10:00 PM is our last order cutoff, all days of the week." },
+    { label: "Delivery Fee",          body: "No minimum order value. Standard delivery fee is OMR 0.890." },
     { label: "Free Returns",          body: "We offer a \"no questions asked\" free returns policy which allows you to return delivered items to us for any reason up to 30 days from the delivery of your order, free of charge." },
-    { label: "100% Satisfaction",     body: "We offer 100% satisfaction policy. Please WhatsApp us on our customer service number within 24 hours and we will fix your experience. Call or WhatsApp: +971 50 451 6403" },
+    { label: "100% Satisfaction",     body: "We offer 100% satisfaction policy. Please WhatsApp us on our customer service number within 24 hours and we will fix your experience. Call or WhatsApp: +968 92423242" },
     { label: "Tipping",               body: "There's no need to tip your delivery driver — we pay a living wage that doesn't depend on tips." },
   ];
   const DEFAULT_ABUDHABI: CityBlock[] = [
-    { label: "Delivery Time",         body: "Fresh delivery within 2 hours across Abu Dhabi. Order before 8:45 PM for same-day delivery, 7 days a week." },
-    { label: "Last Order Time",       body: "8:45 PM is our last order cutoff, all days of the week." },
-    { label: "Delivery Fee",          body: "No minimum order value. Standard delivery fee is AED 20." },
+    { label: "Delivery Time",         body: "Fresh delivery within 1–2 hours across Muscat. Order before 10:00 PM for same-day delivery, 7 days a week." },
+    { label: "Last Order Time",       body: "10:00 PM is our last order cutoff, all days of the week." },
+    { label: "Delivery Fee",          body: "No minimum order value. Standard delivery fee is OMR 0.890." },
     { label: "Free Returns",          body: "We offer a \"no questions asked\" free returns policy which allows you to return delivered items to us for any reason up to 30 days from the delivery of your order, free of charge." },
-    { label: "100% Satisfaction",     body: "We offer 100% satisfaction policy. Please WhatsApp us on our customer service number within 24 hours and we will fix your experience. Call or WhatsApp: +971 50 451 6403" },
+    { label: "100% Satisfaction",     body: "We offer 100% satisfaction policy. Please WhatsApp us on our customer service number within 24 hours and we will fix your experience. Call or WhatsApp: +968 92423242" },
     { label: "Tipping",               body: "There's no need to tip your delivery driver — we pay a living wage that doesn't depend on tips." },
   ];
   const DEFAULT_SHARJAH: CityBlock[] = [
-    { label: "Delivery Time",         body: "Same-day delivery across Sharjah and Ajman. Order before 8:45 PM for same-day delivery, 7 days a week." },
-    { label: "Last Order Time",       body: "8:45 PM is our last order cutoff, all days of the week." },
-    { label: "Delivery Fee",          body: "No minimum order value. Standard delivery fee is AED 15." },
+    { label: "Delivery Time",         body: "Express delivery within 1–2 hours across Muscat. Order before 10:00 PM for same-day delivery, 7 days a week." },
+    { label: "Last Order Time",       body: "10:00 PM is our last order cutoff, all days of the week." },
+    { label: "Delivery Fee",          body: "No minimum order value. Standard delivery fee is OMR 0.890." },
     { label: "Free Returns",          body: "We offer a \"no questions asked\" free returns policy which allows you to return delivered items to us for any reason up to 30 days from the delivery of your order, free of charge." },
-    { label: "100% Satisfaction",     body: "We offer 100% satisfaction policy. Please WhatsApp us on our customer service number within 24 hours and we will fix your experience. Call or WhatsApp: +971 50 451 6403" },
+    { label: "100% Satisfaction",     body: "We offer 100% satisfaction policy. Please WhatsApp us on our customer service number within 24 hours and we will fix your experience. Call or WhatsApp: +968 92423242" },
     { label: "Tipping",               body: "There's no need to tip your delivery driver — we pay a living wage that doesn't depend on tips." },
   ];
 
@@ -399,9 +399,7 @@ function DeliveryTab({ pageSettings }: { pageSettings: PageSettings | undefined 
     pageSettings?.deliveryCities && pageSettings.deliveryCities.length
       ? pageSettings.deliveryCities
       : [
-          { name: t("product.city_dubai"),    rows: pageSettings?.dubaiDeliveryInfo    ?? DEFAULT_DUBAI },
-          { name: t("product.city_abudhabi"), rows: pageSettings?.abudhabiDeliveryInfo ?? DEFAULT_ABUDHABI },
-          { name: t("product.city_sharjah"),  rows: pageSettings?.sharjahDeliveryInfo  ?? DEFAULT_SHARJAH },
+          { name: "Muscat", rows: pageSettings?.dubaiDeliveryInfo ?? DEFAULT_DUBAI },
         ];
   const activeIdx = Math.min(cityIdx, cities.length - 1);
   const active = cities[activeIdx] ?? cities[0];

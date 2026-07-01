@@ -437,11 +437,11 @@ const HOME_JSON_LD = {
   name: "MLS Oman",
   url: "https://mls.om",
   logo: "https://mls.om/cdn/shop/files/logo_97c8d848-b3ec-4a82-a68e-dcedc161529c.png?v=1711022728",
-  description: "Premium halal meats — Wagyu, Angus, lamb and more — delivered within 1 hour across Dubai, 2 hours across Abu Dhabi.",
+  description: "Premium halal meats — Wagyu, Angus, lamb and more — delivered within 1–2 hours across Muscat.",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Marasi Drive, Business Bay",
-    addressLocality: "Dubai",
+    streetAddress: "SHS Tower, Suite 81, Ghala",
+    addressLocality: "Muscat",
     addressCountry: "AE",
   },
   contactPoint: {
@@ -469,12 +469,12 @@ const LOCAL_BUSINESS_JSON_LD = {
   url: "https://mls.om",
   image: "https://mls.om/cdn/shop/files/logo_97c8d848-b3ec-4a82-a68e-dcedc161529c.png?v=1711022728",
   telephone: "+96892423242",
-  priceRange: "AED 50 - AED 500",
+  priceRange: "OMR 2 - OMR 100",
   servesCuisine: "Halal Meat",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Marasi Drive, Business Bay",
-    addressLocality: "Dubai",
+    streetAddress: "SHS Tower, Suite 81, Ghala",
+    addressLocality: "Muscat",
     addressCountry: "AE",
   },
   geo: { "@type": "GeoCoordinates", latitude: 25.185, longitude: 55.267 },
@@ -510,11 +510,11 @@ const WEBSITE_JSON_LD = {
 };
 
 export const meta: MetaFunction = () => [
-  { title: "Fresh meat delivered in 1-hour slots until 8:45 PM - MLS Oman" },
-  { name: "description", content: "Fresh premium meat delivered within 1 hour across Dubai & Abu Dhabi. Order halal beef, lamb, chicken & more with fast, hygienic doorstep delivery." },
+  { title: "Fresh meat delivered in 1-hour slots until 10:00 PM - MLS Oman" },
+  { name: "description", content: "Fresh premium meat delivered within 1–2 hours across Muscat. Order halal beef, lamb, chicken & more with fast, hygienic doorstep delivery." },
   { property: "og:type", content: "website" },
-  { property: "og:title", content: "Fresh meat delivered in 1-hour slots until 8:45 PM - MLS Oman" },
-  { property: "og:description", content: "Fresh premium meat delivered within 1 hour across Dubai & Abu Dhabi. Order halal beef, lamb, chicken & more with fast, hygienic doorstep delivery." },
+  { property: "og:title", content: "Fresh meat delivered in 1-hour slots until 10:00 PM - MLS Oman" },
+  { property: "og:description", content: "Fresh premium meat delivered within 1–2 hours across Muscat. Order halal beef, lamb, chicken & more with fast, hygienic doorstep delivery." },
   { property: "og:url", content: "https://mls.om/" },
   { property: "og:image", content: "https://mls.om/cdn/shop/files/logo_97c8d848-b3ec-4a82-a68e-dcedc161529c.png?v=1711022728" },
   { property: "og:image:width", content: "1080" },
@@ -805,7 +805,7 @@ export default function Home() {
 
   return (
     <>
-      <h1 className="sr-only">Premium Fresh Meat Delivery in Dubai, Abu Dhabi &amp; UAE</h1>
+      <h1 className="sr-only">Premium Fresh Meat Delivery in Muscat, Oman</h1>
       {order.map((k) => sections[k])}
     </>
   );

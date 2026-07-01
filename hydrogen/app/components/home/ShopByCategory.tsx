@@ -61,8 +61,8 @@ export function ShopByCategory({ section }: Props) {
           </HScroller>
         </div>
 
-        {/* Desktop: 3-col grid (matches UAE) */}
-        <div className="hidden md:grid md:grid-cols-3 md:gap-3 lg:gap-4">
+        {/* Desktop: 4-col grid (matches UAE) */}
+        <div className="hidden md:grid md:grid-cols-4 md:gap-3 lg:gap-4">
           {section.items.map((item) => (
             <CategoryCard key={item.id} item={item} />
           ))}

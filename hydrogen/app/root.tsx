@@ -141,7 +141,7 @@ const LAYOUT_QUERY = `#graphql
       items { ...MenuFields }
     }
 
-    mobileMenu: menu(handle: "hydrogen-desktop") {
+    mobileMenu: menu(handle: "mls-mobile-menu") {
       items { ...MenuFields }
     }
 
@@ -428,7 +428,7 @@ const NAV_EN_HELPER_QUERY = `#graphql
     mobileCategoriesMenu: menu(handle: "mls-mobile-categories") {
       items { id title }
     }
-    mobileMenu: menu(handle: "hydrogen-desktop") {
+    mobileMenu: menu(handle: "mls-mobile-menu") {
       items { id title items { id title } }
     }
     navItemImages: metaobjects(type: "mls_nav_item_image", first: 50) {

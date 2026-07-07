@@ -21,6 +21,7 @@ export default hydrogenRoutes([
   route('ar/pages/mls-rewards', 'routes/pages.mls-rewards.tsx', { id: 'ar-pages-mls-rewards' }),
   route('ar/pages/مكافآت-mls', 'routes/pages.mls-rewards.tsx', { id: 'ar-pages-mls-rewards-ar' }),
   route('ar/pages/all-blog', 'routes/pages.all-blog.tsx', { id: 'ar-pages-all-blog' }),
+  route('ar/pages/all-blogs', 'routes/pages.all-blog.tsx', { id: 'ar-pages-all-blogs' }),
   route('ar/pages/refer-a-friend', 'routes/pages.refer-a-friend.tsx', { id: 'ar-pages-refer' }),
   route('ar/pages/referral', 'routes/pages.refer-a-friend.tsx', { id: 'ar-pages-referral' }),
   route('ar/pages/أح-ل-صديق-ا', 'routes/pages.refer-a-friend.tsx', { id: 'ar-pages-refer-ar' }),
@@ -71,6 +72,8 @@ export default hydrogenRoutes([
   route('pages/rewards', 'routes/pages.rewards.tsx'),
   route('pages/mls-rewards', 'routes/pages.mls-rewards.tsx'),
   route('pages/all-blog', 'routes/pages.all-blog.tsx'),
+  // Footer "MLS Blogs" links to /pages/all-blogs (with an s) — redirect to the blog listing too.
+  route('pages/all-blogs', 'routes/pages.all-blog.tsx', { id: 'pages-all-blogs' }),
   route('pages/refer-a-friend', 'routes/pages.refer-a-friend.tsx'),
   // Menu links "Refer a Friend" to /pages/referral — render the Yotpo referral widget there too.
   route('pages/referral', 'routes/pages.refer-a-friend.tsx', { id: 'pages-referral' }),

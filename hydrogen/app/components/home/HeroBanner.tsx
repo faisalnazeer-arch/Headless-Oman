@@ -21,6 +21,7 @@ interface HeroSlide {
   content: string | null;
   buttonText: string | null;
   buttonUrl: string | null;
+  sortOrder: number;
 }
 
 interface RawMetaobjectNode {
@@ -37,7 +38,7 @@ interface RawMetaobjectNode {
 
 function parseSlides(nodes: RawMetaobjectNode[]): HeroSlide[] {
   return nodes
-    .map((node) => {
+    .map((node, idx) => {
       const fieldMap = Object.fromEntries(node.fields.map((f) => [f.key, f]));
 
       const desktopImage = fieldMap["desktop_image"]?.reference?.image ?? null;
@@ -56,6 +57,11 @@ function parseSlides(nodes: RawMetaobjectNode[]): HeroSlide[] {
         }
       }
 
+      // Slide display order from the metaobject's "sort_order" field. Blank/invalid → shown last,
+      // preserving the original (creation) order among those without a value.
+      const rawOrder = fieldMap["sort_order"]?.value;
+      const parsedOrder = rawOrder != null && rawOrder !== "" ? parseInt(rawOrder, 10) : NaN;
+
       return {
         id: node.id,
         desktopImage,
@@ -63,9 +69,14 @@ function parseSlides(nodes: RawMetaobjectNode[]): HeroSlide[] {
         content:    fieldMap["content"]?.value      ?? null,
         buttonText: fieldMap["button_text"]?.value  ?? null,
         buttonUrl,
-      } satisfies HeroSlide;
+        sortOrder: Number.isFinite(parsedOrder) ? parsedOrder : Number.MAX_SAFE_INTEGER,
+        _idx: idx,
+      };
     })
-    .filter((s): s is HeroSlide => s !== null);
+    .filter((s): s is HeroSlide & { _idx: number } => s !== null)
+    // Lower sort_order first; ties (and blanks) keep their original order.
+    .sort((a, b) => a.sortOrder - b.sortOrder || a._idx - b._idx)
+    .map(({ _idx, ...slide }) => slide);
 }
 
 // ── Main component ─────────────────────────────────────────────────────────

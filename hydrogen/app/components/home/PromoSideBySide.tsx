@@ -45,6 +45,8 @@ export function PromoSideBySide({ promo }: PromoSideBySideProps) {
             <img
               src={shopifyImageUrl(promo.imageUrl, 1000)}
               alt={promo.imageAlt ?? promo.heading}
+              loading="lazy"
+              decoding="async"
               className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-charcoal/20 via-transparent to-transparent" />

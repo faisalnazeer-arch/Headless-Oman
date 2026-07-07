@@ -32,7 +32,7 @@ export function ValueBoxesBanner({ banner }: Props) {
   if (!banner.heading && banner.imageUrl) {
     return (
       <div className="w-full">
-        <img src={shopifyImageUrl(banner.imageUrl, 1200)} alt={banner.imageAlt || ""} className="w-full h-auto" />
+        <img src={shopifyImageUrl(banner.imageUrl, 1200)} alt={banner.imageAlt || ""} loading="lazy" decoding="async" className="w-full h-auto" />
       </div>
     );
   }
@@ -48,6 +48,8 @@ export function ValueBoxesBanner({ banner }: Props) {
           <img
             src={shopifyImageUrl(banner.imageUrl, 700)}
             alt={banner.imageAlt || banner.heading}
+            loading="lazy"
+            decoding="async"
             className="absolute inset-0 h-full w-full object-cover opacity-15"
           />
         )}
@@ -113,6 +115,8 @@ export function ValueBoxesBanner({ banner }: Props) {
                 <img
                   src={shopifyImageUrl(banner.imageUrl, 1200)}
                   alt={banner.imageAlt || banner.heading}
+                  loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-cover"
                 />
                 <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10" />

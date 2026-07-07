@@ -37,6 +37,8 @@ export function FeaturedCollections({ cards, title, subtitle }: FeaturedCollecti
               <img
                 src={shopifyImageUrl(c.imageUrl, 450)}
                 alt={c.imageAlt ?? c.heading}
+                loading="lazy"
+                decoding="async"
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
             ) : (

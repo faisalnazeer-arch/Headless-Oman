@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router";
-import { Facebook, Instagram, Linkedin, Phone, Twitter } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
 import logo from "@/assets/mls-logo.png";
 import { useLocalePath } from "@/stores/localeStore";
 import {
@@ -57,12 +57,12 @@ export function Footer({ settings, menuCols }: Props) {
     email:         settings?.email          || DEFAULTS.email,
     newsletterTitle:    settings?.newsletterTitle    || DEFAULTS.newsletterTitle,
     newsletterSubtitle: settings?.newsletterSubtitle || DEFAULTS.newsletterSubtitle,
-    instagram:     settings?.instagramUrl,
-    facebook:      settings?.facebookUrl,
+    instagram:     settings?.instagramUrl   || "https://www.instagram.com/mls.om/",
+    facebook:      settings?.facebookUrl    || "https://www.facebook.com/muscatlivestock",
     twitter:       settings?.twitterUrl,
     tiktok:        settings?.tiktokUrl,
     whatsapp:      settings?.whatsappUrl    || `https://wa.me/96892423242`,
-    linkedin:      settings?.linkedinUrl,
+    linkedin:      settings?.linkedinUrl    || "https://www.linkedin.com/company/muscatlivestock/",
     brandText:     settings?.brandText,
     copyright:     settings?.copyright      || DEFAULTS.copyright,
     bottomTagline: settings?.bottomTagline,
@@ -118,7 +118,14 @@ export function Footer({ settings, menuCols }: Props) {
 }
 
 function BrandCol({ contact }: { contact: ContactData }) {
-  const whatsappHref = "https://wa.me/96892423242";
+  // Derive local display numbers (strip the +968 country code) to match the live site:
+  //   Whatsapp: 92423242   ·   Telephone: 24026400
+  const waDigits    = (contact.whatsapp || "").replace(/\D/g, "") || "96892423242";
+  const whatsappHref = `https://wa.me/${waDigits}`;
+  const waDisplay   = waDigits.replace(/^968/, "");
+  const telDigits   = (contact.phone || "").replace(/\D/g, "");
+  const telHref     = `tel:+${telDigits}`;
+  const telDisplay  = telDigits.replace(/^968/, "");
 
   return (
     <div className="min-w-[240px] max-w-[300px] flex-1">
@@ -136,7 +143,7 @@ function BrandCol({ contact }: { contact: ContactData }) {
         </p>
       )}
 
-      {/* Email + WhatsApp as plain text lines */}
+      {/* Email + WhatsApp + Telephone as plain text lines (matches live site) */}
       <div className="mt-4 space-y-1 text-sm">
         {contact.email && (
           <p>
@@ -146,28 +153,29 @@ function BrandCol({ contact }: { contact: ContactData }) {
             </a>
           </p>
         )}
+        <p>
+          <span className="font-semibold text-white">Whatsapp: </span>
+          <a
+            href={whatsappHref}
+            className="text-off-white/80 hover:text-white"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {waDisplay}
+          </a>
+        </p>
         {contact.phone && (
           <p>
-            <span className="font-semibold text-white">Whatsapp</span>
-            <a
-              href={whatsappHref}
-              className="text-off-white/80 hover:text-white"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {contact.phone}
+            <span className="font-semibold text-white">Telephone: </span>
+            <a href={telHref} className="text-off-white/80 hover:text-white">
+              {telDisplay}
             </a>
           </p>
         )}
       </div>
 
-      {/* Social icons */}
+      {/* Social icons — Facebook, Instagram, WhatsApp, LinkedIn (matches live site) */}
       <div className="mt-5 flex flex-wrap gap-4">
-        {contact.phone && (
-          <a href={`tel:${contact.phone}`} aria-label="Phone" className="text-off-white/70 hover:text-white">
-            <Phone className="h-5 w-5" />
-          </a>
-        )}
         {contact.facebook && (
           <a href={contact.facebook} aria-label="Facebook" className="text-off-white/70 hover:text-white" target="_blank" rel="noopener noreferrer">
             <Facebook className="h-5 w-5" />

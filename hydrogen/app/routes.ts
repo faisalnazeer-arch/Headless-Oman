@@ -22,6 +22,7 @@ export default hydrogenRoutes([
   route('ar/pages/مكافآت-mls', 'routes/pages.mls-rewards.tsx', { id: 'ar-pages-mls-rewards-ar' }),
   route('ar/pages/all-blog', 'routes/pages.all-blog.tsx', { id: 'ar-pages-all-blog' }),
   route('ar/pages/refer-a-friend', 'routes/pages.refer-a-friend.tsx', { id: 'ar-pages-refer' }),
+  route('ar/pages/referral', 'routes/pages.refer-a-friend.tsx', { id: 'ar-pages-referral' }),
   route('ar/pages/أح-ل-صديق-ا', 'routes/pages.refer-a-friend.tsx', { id: 'ar-pages-refer-ar' }),
   route('ar/pages/faqs', 'routes/pages.faqs.tsx', { id: 'ar-pages-faqs' }),
   route('ar/pages/أسئلة-وأجوبة', 'routes/pages.faqs.tsx', { id: 'ar-pages-faqs-ar' }),
@@ -71,6 +72,8 @@ export default hydrogenRoutes([
   route('pages/mls-rewards', 'routes/pages.mls-rewards.tsx'),
   route('pages/all-blog', 'routes/pages.all-blog.tsx'),
   route('pages/refer-a-friend', 'routes/pages.refer-a-friend.tsx'),
+  // Menu links "Refer a Friend" to /pages/referral — render the Yotpo referral widget there too.
+  route('pages/referral', 'routes/pages.refer-a-friend.tsx', { id: 'pages-referral' }),
   route('pages/faqs', 'routes/pages.faqs.tsx'),
   route('pages/mls-gourmet', 'routes/pages.mls-gourmet.tsx'),
   route('pages/our-story-new', 'routes/pages.our-story-new.tsx'),

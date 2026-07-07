@@ -1066,3 +1066,43 @@ export const useCartStore = create<CartStore>()(
 if (typeof window !== "undefined") {
   useCartStore.persist.rehydrate();
 }
+
+// ── UpPromote affiliate tracking ──────────────────────────────────────────────
+// UpPromote attributes affiliate sales via its pixel (loaded in root.tsx as `upTag`).
+// On a headless store we must send a `cart_updated` event whenever the cart changes,
+// passing the Shopify cart GID (which already carries the required `?key=` param) so
+// UpPromote can link the sca_ref referral to the eventual order.
+if (typeof window !== "undefined") {
+  let lastSig = "";
+  let polling = false;
+
+  const send = (id: string, checkoutUrl: string | null): boolean => {
+    const up = (window as any).upTag;
+    if (typeof up !== "function") return false;
+    try { up("event", "cart_updated", { id, checkoutUrl: checkoutUrl || undefined }); } catch { /* ignore */ }
+    return true;
+  };
+
+  const notify = (s: CartStore) => {
+    if (!s.cartId) return;
+    const sig = s.cartId + "|" + s.items.reduce((n, i) => n + i.quantity, 0);
+    if (sig === lastSig) return;
+    lastSig = sig;
+    if (send(s.cartId, s.checkoutUrl)) return;
+    // Pixel not ready yet (async) — retry briefly with the latest cart state.
+    if (polling) return;
+    polling = true;
+    let tries = 0;
+    const t = setInterval(() => {
+      const st = useCartStore.getState();
+      if (!st.cartId || send(st.cartId, st.checkoutUrl) || ++tries > 20) {
+        polling = false;
+        clearInterval(t);
+      }
+    }, 500);
+  };
+
+  useCartStore.subscribe(notify);
+  // Fire once for an already-persisted cart (returning visitor).
+  notify(useCartStore.getState());
+}

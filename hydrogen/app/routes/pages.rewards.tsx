@@ -11,7 +11,7 @@ export const meta: MetaFunction = () => [
   { name: "description", content: "Join MLS Rewards and earn points on every purchase. Redeem for discounts on fresh halal meat delivery." },
 ];
 
-const YOTPO_GUID = "3zSKLTmmtHC3S0CGw89ppA";
+const YOTPO_GUID = "IkCUJukJchRQxi9XiLD_dQ";
 
 const REWARDS_QUERY = `
   query RewardsPage($language: LanguageCode, $country: CountryCode)
@@ -309,7 +309,7 @@ function WidgetSection() {
         </div>
 
         <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)]">
-          <div className="yotpo-widget-instance" data-yotpo-instance-id="567647" />
+          <div className="yotpo-widget-instance" data-yotpo-instance-id="306800" />
         </div>
       </div>
     </section>

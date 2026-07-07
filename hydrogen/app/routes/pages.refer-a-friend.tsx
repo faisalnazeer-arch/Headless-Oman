@@ -13,8 +13,8 @@ export const meta: MetaFunction = () => [
   { name: "description", content: "Refer a friend to MLS and earn rewards." },
 ];
 
-const YOTPO_GUID = "3zSKLTmmtHC3S0CGw89ppA";
-const REFERRAL_INSTANCE_ID = "822349";
+const YOTPO_GUID = "IkCUJukJchRQxi9XiLD_dQ";
+const REFERRAL_INSTANCE_ID = "306739";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   User, Users, Mail, Gift, Trophy, ShoppingCart, Tag, Smile,

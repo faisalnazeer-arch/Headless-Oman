@@ -1,6 +1,6 @@
 import type { ActionFunctionArgs } from "@shopify/remix-oxygen";
 
-const KLAVIYO_COMPANY_ID = "RibCBS";
+const KLAVIYO_COMPANY_ID = "SC5Mtp";
 
 export async function action({ request }: ActionFunctionArgs) {
   if (request.method !== "POST") {

@@ -1,13 +1,19 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@shopify/remix-oxygen";
 import { useLoaderData } from "react-router";
-import { useCallback } from "react";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 import { detectLanguage } from "../lib/locale";
 import { applyArImages } from "../lib/arImages";
 
+// Convert a youtu.be / watch URL into an embeddable URL (leaves already-embed URLs as-is).
+function toYouTubeEmbed(url: string): string {
+  if (!url) return "";
+  const m = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return m ? `https://www.youtube.com/embed/${m[1]}` : url;
+}
+
 export const meta: MetaFunction = () => [
   { title: "MLS Affiliate Program — Make Money with MLS" },
-  { name: "description", content: "Join the MLS Partner Program. Earn 10% commission on every sale you refer." },
+  { name: "description", content: "Join the MLS Partner Program. Earn 5% commission on every sale you refer." },
 ];
 
 const PAGE_QUERY = `
@@ -107,14 +113,14 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     heroImageMobile:   f.hero_image_mobile?.reference?.image?.url ?? "",
     heroCtaLabel:      f.hero_cta_label?.value                   ?? "Start Earning Now",
     heroLoginLabel:    f.hero_login_label?.value                  ?? "Log in",
-    heroLoginUrl:      f.hero_login_url?.value                   ?? "https://affiliates.socialsnowball.io/auth/affiliate/login",
+    heroLoginUrl:      f.hero_login_url?.value                   ?? "https://affiliate.mls.om/",
     stepsTitle:        f.steps_title?.value                      ?? "How It Works",
     stepsSubtitle:     f.steps_subtitle?.value                   ?? "Join now to start promoting MLS and earning a commission in 3 simple steps:",
     step1Title:        f.step_1_title?.value                     ?? "Become Our Partner",
     step1Desc:         f.step_1_desc?.value                      ?? "",
     step2Title:        f.step_2_title?.value                     ?? "Promote MLS",
     step2Desc:         f.step_2_desc?.value                      ?? "",
-    step3Title:        f.step_3_title?.value                     ?? "Earn 10% Commission",
+    step3Title:        f.step_3_title?.value                     ?? "Earn 5% Commission",
     step3Desc:         f.step_3_desc?.value                      ?? "",
     overviewTitle:     f.overview_title?.value                   ?? "Program Overview",
     overviewSubtitle:  f.overview_subtitle?.value                ?? "We are here to support you at every step.",
@@ -127,7 +133,9 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     testimonialAuthor: f.testimonial_author?.value               ?? "",
     testimonialText:   f.testimonial_text?.value                 ?? "",
     registerTitle:     f.register_title?.value                   ?? "Register",
-    snowballFormId:    f.snowball_form_id?.value                 ?? "03b6253f-796a-46a2-9a9c-dadfbe5b4cc0",
+    registerUrl:       f.register_url?.value                     ?? "https://affiliate.mls.om/register",
+    videoTitle:        f.video_title?.value                      ?? "",
+    videoUrl:          toYouTubeEmbed(f.video_url?.value         ?? "https://youtu.be/4_iyfw7nG9g"),
     faqTitle:          f.faq_title?.value                        ?? "FAQs",
     faqs,
   };
@@ -269,14 +277,35 @@ export default function AffiliatePage() {
         </section>
       )}
 
-      {/* ── Register (Social Snowball popup) ── */}
-      <section id="affiliate-register" className="py-12 md:py-16 bg-white">
+      {/* ── Register (UpPromote affiliate portal) ── */}
+      <section id="affiliate-register" className="py-6 md:py-8 bg-white">
         <div className="mx-auto max-w-2xl px-4 sm:px-6">
-          <h2 className="mb-3 text-center text-2xl font-bold text-gray-900 sm:text-3xl">{d.registerTitle}</h2>
-          <p className="mb-8 text-center text-sm text-gray-500">Fill out the short form to become an MLS Partner and start earning commissions.</p>
-          <AffiliateRegisterButton formId={d.snowballFormId} />
+          <h2 className="mb-2 text-center text-2xl font-bold text-gray-900 sm:text-3xl">{d.registerTitle}</h2>
+          <p className="mb-5 text-center text-sm text-gray-500">Fill out the short form to become an MLS Partner and start earning commissions.</p>
+          <AffiliateRegisterButton registerUrl={d.registerUrl} />
         </div>
       </section>
+
+      {/* ── Video (matches live theme — affiliate explainer) ── */}
+      {d.videoUrl && (
+        <section className="py-12 md:py-16" style={{ background: "#f3f3f3" }}>
+          <div className="mx-auto max-w-4xl px-4 sm:px-6">
+            {d.videoTitle && (
+              <h2 className="mb-8 text-center text-2xl font-bold text-gray-900 sm:text-3xl">{d.videoTitle}</h2>
+            )}
+            <div className="relative w-full overflow-hidden rounded-2xl shadow-lg" style={{ aspectRatio: "16 / 9" }}>
+              <iframe
+                src={d.videoUrl}
+                title={d.videoTitle || "MLS Affiliate Program"}
+                className="absolute inset-0 h-full w-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── FAQs ── */}
       {d.faqs.length > 0 && (
@@ -292,28 +321,21 @@ export default function AffiliatePage() {
   );
 }
 
-// ── Affiliate Register Button (popup) ────────────────────────────────────────
+// ── Affiliate Register Button (UpPromote affiliate portal) ───────────────────
 
-function AffiliateRegisterButton({ formId }: { formId: string }) {
-  const openForm = useCallback(() => {
-    const url = `https://app.socialsnowball.io/register-form/muscat-livestock.myshopify.com/${formId}`;
-    const w = 520;
-    const h = 760;
-    const left = Math.max(0, (window.screen.width - w) / 2);
-    const top  = Math.max(0, (window.screen.height - h) / 2);
-    window.open(url, "affiliate-signup", `width=${w},height=${h},left=${left},top=${top},scrollbars=yes,resizable=yes`);
-  }, [formId]);
-
+function AffiliateRegisterButton({ registerUrl }: { registerUrl: string }) {
   return (
     <div className="flex flex-col items-center gap-4">
-      <button
-        onClick={openForm}
-        className="inline-flex items-center gap-2 rounded-lg px-10 py-4 text-base font-bold text-white shadow-lg transition-opacity hover:opacity-90 cursor-pointer"
-        style={{ background: "#a70a10" }}
+      <a
+        href={registerUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 rounded-lg px-10 py-4 text-base font-bold shadow-lg transition-opacity hover:opacity-90 cursor-pointer"
+        style={{ background: "#a70a10", color: "#ffffff" }}
       >
         Apply Now — It's Free
-      </button>
-      <p className="text-xs text-gray-400">Opens a secure sign-up window · Powered by Social Snowball</p>
+      </a>
+      <p className="text-xs text-gray-400">Opens the affiliate sign-up · Powered by UpPromote</p>
     </div>
   );
 }

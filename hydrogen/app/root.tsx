@@ -590,7 +590,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {/* GTM — dataLayer queue is created immediately (events are never lost), but the heavy
             gtm.js loads on first interaction OR a 4s fallback (guaranteed), keeping it off the
             critical path. The Meta/TikTok/Snapchat ad pixels below are NOT deferred. */}
-        <script dangerouslySetInnerHTML={{ __html: `(function(w,d){w.dataLayer=w.dataLayer||[];w.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});var done=false,t;function L(){var j=d.createElement('script');j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=GTM-K59CLCPC';d.head.appendChild(j);}var evts=['scroll','touchstart','mousedown','keydown','mousemove'];function R(){if(done)return;done=true;clearTimeout(t);evts.forEach(function(e){w.removeEventListener(e,R)});L();}evts.forEach(function(e){w.addEventListener(e,R,{passive:true})});t=setTimeout(R,4000);})(window,document);` }} />
+        <script dangerouslySetInnerHTML={{ __html: `(function(w,d){w.dataLayer=w.dataLayer||[];w.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});var done=false,t;function L(){var j=d.createElement('script');j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=GTM-MNFBCW5';d.head.appendChild(j);}var evts=['scroll','touchstart','mousedown','keydown','mousemove'];function R(){if(done)return;done=true;clearTimeout(t);evts.forEach(function(e){w.removeEventListener(e,R)});L();}evts.forEach(function(e){w.addEventListener(e,R,{passive:true})});t=setTimeout(R,4000);})(window,document);` }} />
         {/* ── Ad pixels (Meta / TikTok / Snapchat) ──────────────────────────────────
              REMOVED for now — the previous IDs were the UAE store's. Re-add the Oman
              pixel IDs here at go-live. dataLayer.ts already no-ops safely when these
@@ -600,23 +600,29 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {/* Klaviyo — proxy stub so klaviyo.push() is safe before SDK loads */}
         <script dangerouslySetInnerHTML={{ __html: `!function(){if(!window.klaviyo){window._klOnsite=window._klOnsite||[];try{window.klaviyo=new Proxy({},{get:function(n,i){return"push"===i?function(){var n;(n=window._klOnsite).push.apply(n,arguments)}:function(){for(var n=arguments.length,o=new Array(n),w=0;w<n;w++)o[w]=arguments[w];var t="function"==typeof o[o.length-1]?o.pop():void 0,e=new Promise((function(n){window._klOnsite.push([i].concat(o,[function(i){t&&t(i),n(i)}]))}));return e}}})}catch(n){window.klaviyo=window.klaviyo||[],window.klaviyo.push=function(){var n;(n=window._klOnsite).push.apply(n,arguments)}}}}();` }} />
         {/* Klaviyo Onsite JS — handles forms, page tracking, identify */}
-        <script async src="https://static.klaviyo.com/onsite/js/RibCBS/klaviyo.js" />
-        {/* Microsoft Clarity — deferred to browser idle (off the critical path → lower TBT).
-            Guaranteed to load via the requestIdleCallback timeout / setTimeout fallback. */}
-        <script dangerouslySetInnerHTML={{ __html: `(function(){function L(){(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","o54b753gku");}if("requestIdleCallback"in window){requestIdleCallback(L,{timeout:3000});}else{setTimeout(L,2500);}})();` }} />
+        <script async src="https://static.klaviyo.com/onsite/js/SC5Mtp/klaviyo.js" />
+        {/* Microsoft Clarity — REMOVED: the Oman live site does not use Clarity (the
+            previous tag was the UAE store's). Re-add here if an Oman Clarity project is set up. */}
         {/* PushOwl + Brevo — web push notifications */}
         {/* Shim window.Shopify so PushOwl can identify the store in headless mode */}
         <script dangerouslySetInnerHTML={{ __html: `window.Shopify=window.Shopify||{};window.Shopify.shop=window.Shopify.shop||'muscat-livestock.myshopify.com';` }} />
         {/* PushOwl/Brevo — deferred to idle (guaranteed to load via the timeout fallback) */}
-        <script dangerouslySetInnerHTML={{ __html: `(function(){function L(){var s=document.createElement("script");s.async=true;s.src="https://cdn.shopify.com/extensions/00bb358e-e093-46ce-a5ef-3b66f0295001/pushowl-brevo-email-push-sms-82/assets/pushowl-shopify.js";document.head.appendChild(s);}if("requestIdleCallback"in window){requestIdleCallback(L,{timeout:4000});}else{setTimeout(L,3000);}})();` }} />
-        {/* Snowball — affiliate / referral tracking (identifies the store via the shop param) */}
-        <script async src="https://api.socialsnowball.io/js/referral.js?shop=muscat-livestock.myshopify.com" />
+        <script dangerouslySetInnerHTML={{ __html: `(function(){function L(){var s=document.createElement("script");s.async=true;s.src="https://cdn.shopify.com/extensions/019ef94d-e41a-7e61-9259-faf6609a0254/pushowl-306/assets/pushowl-shopify.js";document.head.appendChild(s);}if("requestIdleCallback"in window){requestIdleCallback(L,{timeout:4000});}else{setTimeout(L,3000);}})();` }} />
+        {/* UpPromote Affiliate (by Secomapp) — the Oman store's affiliate/referral app.
+            Replaces Social Snowball (which was the UAE store's app). Referral param: sca_ref. */}
+        {/* Customer-referral widget (theme-app-extension asset the live mls.om theme uses). */}
+        <link rel="stylesheet" href="https://cdn.shopify.com/extensions/019f02b6-22fe-7246-a7bb-fa2e477ed7f6/affliate-by-secomapp-119/assets/customer-referral.css" />
+        <script defer src="https://cdn.shopify.com/extensions/019f02b6-22fe-7246-a7bb-fa2e477ed7f6/affliate-by-secomapp-119/assets/customer-referral.js" />
+        {/* Affiliate conversion pixel — reads the sca_ref referral and attributes orders.
+            The cart store fires upTag('event','cart_updated', {id, checkoutUrl}) on cart
+            changes (see app/stores/cartStore.ts); the cart GID already carries its ?key=. */}
+        <script async src="https://pixel.uppromote.com/collect/v1/collect?shop=muscat-livestock.myshopify.com" />
       </head>
       <body>
         {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-K59CLCPC"
+            src="https://www.googletagmanager.com/ns.html?id=GTM-MNFBCW5"
             height="0"
             width="0"
             style={{ display: "none", visibility: "hidden" }}
@@ -653,7 +659,7 @@ function RichpanelWidget() {
       document.head.appendChild(s);
     };
     w.richpanel.ensure_rpuid = "";
-    w.richpanel.load("mlslive1884");
+    w.richpanel.load("mlslive1881");
     w.richpanel.loaded = true;
   }, []);
 

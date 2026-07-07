@@ -464,6 +464,7 @@ const HOME_JSON_LD = {
   sameAs: [
     "https://www.instagram.com/mls.om",
     "https://www.facebook.com/muscatlivestock",
+    "https://www.linkedin.com/company/muscatlivestock/",
   ],
   aggregateRating: {
     "@type": "AggregateRating",
@@ -475,20 +476,22 @@ const HOME_JSON_LD = {
 
 const LOCAL_BUSINESS_JSON_LD = {
   "@context": "https://schema.org",
-  "@type": "FoodEstablishment",
+  "@type": ["FoodEstablishment", "LocalBusiness"],
+  "@id": "https://mls.om/#localbusiness",
   name: "MLS Oman — Fresh Meat Delivery",
   url: "https://mls.om",
   image: "https://mls.om/cdn/shop/files/logo_97c8d848-b3ec-4a82-a68e-dcedc161529c.png?v=1711022728",
   telephone: "+96892423242",
   priceRange: "OMR 2 - OMR 100",
   servesCuisine: "Halal Meat",
+  areaServed: [{ "@type": "City", name: "Muscat" }],
   address: {
     "@type": "PostalAddress",
     streetAddress: "SHS Tower, Suite 81, Ghala",
     addressLocality: "Muscat",
     addressCountry: "OM",
   },
-  geo: { "@type": "GeoCoordinates", latitude: 25.185, longitude: 55.267 },
+  geo: { "@type": "GeoCoordinates", latitude: 23.5859, longitude: 58.4059 },
   openingHoursSpecification: {
     "@type": "OpeningHoursSpecification",
     dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],

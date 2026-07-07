@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Link } from "react-router";
 import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
 import logo from "@/assets/mls-logo.png";
@@ -97,11 +96,11 @@ export function Footer({ settings, menuCols }: Props) {
               </AccordionItem>
             ))}
           </Accordion>
-          {/* Klaviyo signup on mobile below accordions */}
+          {/* Newsletter — signup is handled by the Klaviyo popup (Oman account SC5Mtp),
+              same as the live site (no embedded form). */}
           <div className="mt-8">
             <p className="mb-1 text-base font-bold text-white">{contact.newsletterTitle}</p>
-            <p className="mb-4 text-sm text-off-white/70">{contact.newsletterSubtitle}</p>
-            <div className="klaviyo-form-TXvrLy"></div>
+            <p className="text-sm text-off-white/70">{contact.newsletterSubtitle}</p>
           </div>
         </div>
       </div>
@@ -223,26 +222,12 @@ function NavCol({ heading, links }: { heading: string; links: FooterLink[] }) {
 }
 
 function NewsletterCol({ title, subtitle }: { title: string; subtitle: string }) {
-  useEffect(() => {
-    // Klaviyo scans DOM on load — after hydration we must re-trigger it
-    if (typeof window !== "undefined") {
-      const kl = (window as any).klaviyo;
-      if (kl && typeof kl.push === "function") {
-        kl.push(["identify", {}]);
-      }
-      // Also fire the generic onsite re-init
-      const onsite = (window as any)._klOnsite;
-      if (Array.isArray(onsite)) {
-        onsite.push(["openForm", "TXvrLy"]);
-      }
-    }
-  }, []);
-
+  // Newsletter signup is handled by the Klaviyo popup (Oman account SC5Mtp), matching the
+  // live site which uses a popup rather than an embedded footer form.
   return (
     <div className="min-w-[220px] max-w-[280px] flex-1">
       <h4 className="mb-2 font-display text-base font-bold text-white">{title}</h4>
-      <p className="mb-4 text-sm text-off-white/70">{subtitle}</p>
-      <div className="klaviyo-form-TXvrLy"></div>
+      <p className="text-sm text-off-white/70">{subtitle}</p>
     </div>
   );
 }

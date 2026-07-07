@@ -18,6 +18,7 @@ interface HeroSlide {
   id: string;
   desktopImage: ShopifyImage | null;
   mobileImage: ShopifyImage | null;
+  tabletImage: ShopifyImage | null;
   content: string | null;
   buttonText: string | null;
   buttonUrl: string | null;
@@ -43,8 +44,9 @@ function parseSlides(nodes: RawMetaobjectNode[]): HeroSlide[] {
 
       const desktopImage = fieldMap["desktop_image"]?.reference?.image ?? null;
       const mobileImage  = fieldMap["mobile_image"]?.reference?.image  ?? null;
+      const tabletImage  = fieldMap["tablet_image"]?.reference?.image  ?? null;
 
-      if (!desktopImage && !mobileImage) return null;
+      if (!desktopImage && !mobileImage && !tabletImage) return null;
 
       let buttonUrl: string | null = null;
       const rawUrl = fieldMap["button_url"]?.value ?? null;
@@ -66,6 +68,7 @@ function parseSlides(nodes: RawMetaobjectNode[]): HeroSlide[] {
         id: node.id,
         desktopImage,
         mobileImage,
+        tabletImage,
         content:    fieldMap["content"]?.value      ?? null,
         buttonText: fieldMap["button_text"]?.value  ?? null,
         buttonUrl,
@@ -181,25 +184,33 @@ function SlideItem({ slide, active, priority }: { slide: HeroSlide; active: bool
   // Responsive hero: a single <picture> so only the viewport's image downloads (no mobile +
   // desktop double-fetch), and resized via the Shopify CDN so mobile gets a small image — the
   // hero is the LCP element, so this is the biggest mobile-speed win.
-  const mob = slide.mobileImage;
-  const desk = slide.desktopImage;
-  const primary = mob ?? desk;
+  // Desktop is the base/fallback: if mobile or tablet isn't set, desktop is used for them.
+  const desk = slide.desktopImage ?? slide.mobileImage ?? slide.tabletImage;
+  const tab  = slide.tabletImage  ?? desk;
+  const mob  = slide.mobileImage  ?? desk;
+  const primary = mob;
   const inner = (
     <div className="relative w-full" style={{ flexShrink: 0 }}>
-      {primary && (
+      {primary && desk && (
         <picture>
-          {mob && desk && (
-            <source
-              media="(min-width: 768px)"
-              srcSet={shopifyImageUrl(desk.url, 1600)}
-              width={desk.width}
-              height={desk.height}
-            />
-          )}
+          {/* Desktop ≥1024px, Tablet 768–1023px, Mobile <768px (the <img> fallback). Only the
+              matching viewport's image downloads. Each falls back to the desktop image. */}
+          <source
+            media="(min-width: 1024px)"
+            srcSet={shopifyImageUrl(desk.url, 1600)}
+            width={desk.width}
+            height={desk.height}
+          />
+          <source
+            media="(min-width: 768px)"
+            srcSet={shopifyImageUrl(tab.url, 1200)}
+            width={tab.width}
+            height={tab.height}
+          />
           {/* width/height reserve the aspect-ratio box so the image can't shift content as it
               loads (CLS); `h-auto w-full` keeps it scaling responsively. */}
           <img
-            src={shopifyImageUrl(primary.url, mob ? 828 : 1600)}
+            src={shopifyImageUrl(primary.url, 828)}
             width={primary.width}
             height={primary.height}
             alt={primary.altText ?? ""}

@@ -133,10 +133,15 @@ const LAYOUT_QUERY = `#graphql
   query LayoutData($language: LanguageCode, $country: CountryCode)
   @inContext(language: $language, country: $country) {
 
-    # Desktop nav = hydrogen-desktop, a Hydrogen-owned CLONE of the live main-menu-1 (so the
-    # live mls.om theme is never affected by storefront-only tweaks, e.g. Poultry & Camel split
-    # into Chicken / Camel). Same 3-level structure as live; split into two rows in the loader.
+    # Row 1 = hydrogen-desktop: Hydrogen-owned menu (5 clean categories — Beef, Lamb & Mutton,
+    # Poultry & Camel, Seasoned & Sauce, Value Boxes — each with full 2nd/3rd-level dropdowns
+    # sourced from live). Editing this never affects the live mls.om theme (main-menu-1).
     mainMenu: menu(handle: "hydrogen-desktop") {
+      items { ...MenuFields }
+    }
+
+    # Row 2 = secondary-menu (Customer Reviews, MLS Rewards, Refer a Friend, Make Money with MLS).
+    secondaryMenu: menu(handle: "secondary-menu") {
       items { ...MenuFields }
     }
 
@@ -463,15 +468,9 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     // In Arabic, swap any image field for its `*_ar` counterpart where set (mobile banners,
     // nav images, etc.). English is untouched; empty `*_ar` falls back to the default image.
     if (language === "AR") { applyArImages(data); applyArImages(adminData); }
-    // hydrogen-desktop (clone of live main-menu-1) is one menu of 11 items; live renders it as a
-    // nav that wraps onto two rows (6 + 5). The Header draws two explicit rows (mainMenu = top,
-    // secondaryMenu = below), so we split at the same point to reproduce that layout.
-    const desktopEntries         = parseShopifyMenu(data?.mainMenu,              "main");
-    const NAV_ROW1_COUNT = 6;
-    const mainMenu               = desktopEntries.slice(0, NAV_ROW1_COUNT);
-    const secondaryMenu          = desktopEntries
-      .slice(NAV_ROW1_COUNT)
-      .map((e) => ({ ...e, menu: "secondary" }));
+    // Header draws two rows: mainMenu (row 1, category dropdowns) + secondaryMenu (row 2, links).
+    const mainMenu               = parseShopifyMenu(data?.mainMenu,              "main");
+    const secondaryMenu          = parseShopifyMenu(data?.secondaryMenu,         "secondary");
     const mobileCategoriesMenu   = parseShopifyMenu(data?.mobileCategoriesMenu,  "mobile-cat");
     const footerSettings = parseFooterSettings(adminData?.footerSettings?.nodes ?? []);
     const announcementMessages = parseAnnouncementMessages(adminData?.announcementBar?.nodes ?? []);

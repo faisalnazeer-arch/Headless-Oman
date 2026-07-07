@@ -133,9 +133,8 @@ const LAYOUT_QUERY = `#graphql
   query LayoutData($language: LanguageCode, $country: CountryCode)
   @inContext(language: $language, country: $country) {
 
-    // Desktop nav = the SAME menu the live mls.om theme renders (main-menu-1), so Hydrogen
-    // mirrors live exactly (Shop Beef, Explore Meat, detailed Poultry & Camel / Value Boxes,
-    // Stores Locations, About MLS…). We split it into two rows in the loader below.
+    # Desktop nav = the SAME menu the live mls.om theme renders (main-menu-1), so Hydrogen
+    # mirrors live exactly. Split into two rows in the loader below.
     mainMenu: menu(handle: "main-menu-1") {
       items { ...MenuFields }
     }
@@ -144,8 +143,7 @@ const LAYOUT_QUERY = `#graphql
       items { ...MenuFields }
     }
 
-    // Mobile "Categories" tab = the same live menu (main-menu-1), rendered as an accordion,
-    // so mobile matches the live site's full category structure just like desktop.
+    # Mobile "Categories" tab = the same live menu (main-menu-1), rendered as an accordion.
     mobileCategoriesMenu: menu(handle: "main-menu-1") {
       items { ...MenuFields }
     }

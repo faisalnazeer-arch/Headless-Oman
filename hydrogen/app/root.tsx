@@ -133,9 +133,10 @@ const LAYOUT_QUERY = `#graphql
   query LayoutData($language: LanguageCode, $country: CountryCode)
   @inContext(language: $language, country: $country) {
 
-    # Desktop nav = the SAME menu the live mls.om theme renders (main-menu-1), so Hydrogen
-    # mirrors live exactly. Split into two rows in the loader below.
-    mainMenu: menu(handle: "main-menu-1") {
+    # Desktop nav = hydrogen-desktop, a Hydrogen-owned CLONE of the live main-menu-1 (so the
+    # live mls.om theme is never affected by storefront-only tweaks, e.g. Poultry & Camel split
+    # into Chicken / Camel). Same 3-level structure as live; split into two rows in the loader.
+    mainMenu: menu(handle: "hydrogen-desktop") {
       items { ...MenuFields }
     }
 
@@ -143,8 +144,8 @@ const LAYOUT_QUERY = `#graphql
       items { ...MenuFields }
     }
 
-    # Mobile "Categories" tab = the same live menu (main-menu-1), rendered as an accordion.
-    mobileCategoriesMenu: menu(handle: "main-menu-1") {
+    # Mobile "Categories" tab = the same hydrogen-desktop menu, rendered as an accordion.
+    mobileCategoriesMenu: menu(handle: "hydrogen-desktop") {
       items { ...MenuFields }
     }
 
@@ -429,7 +430,7 @@ function parseNavItemImages(nodes: any[]): Record<string, string> {
 const NAV_EN_HELPER_QUERY = `#graphql
   query NavEnHelper($language: LanguageCode, $country: CountryCode)
   @inContext(language: $language, country: $country) {
-    mobileCategoriesMenu: menu(handle: "main-menu-1") {
+    mobileCategoriesMenu: menu(handle: "hydrogen-desktop") {
       items { id title }
     }
     mobileMenu: menu(handle: "mls-mobile-menu") {
@@ -462,9 +463,9 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     // In Arabic, swap any image field for its `*_ar` counterpart where set (mobile banners,
     // nav images, etc.). English is untouched; empty `*_ar` falls back to the default image.
     if (language === "AR") { applyArImages(data); applyArImages(adminData); }
-    // Live mls.om renders main-menu-1 as one nav that wraps onto two rows (6 + 5). The Header
-    // draws two explicit rows (mainMenu = top, secondaryMenu = below), so we split the single
-    // live menu at the same point to reproduce that exact layout.
+    // hydrogen-desktop (clone of live main-menu-1) is one menu of 11 items; live renders it as a
+    // nav that wraps onto two rows (6 + 5). The Header draws two explicit rows (mainMenu = top,
+    // secondaryMenu = below), so we split at the same point to reproduce that layout.
     const desktopEntries         = parseShopifyMenu(data?.mainMenu,              "main");
     const NAV_ROW1_COUNT = 6;
     const mainMenu               = desktopEntries.slice(0, NAV_ROW1_COUNT);

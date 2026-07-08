@@ -175,10 +175,14 @@ export function CartDrawer() {
   const shopifySubtotal = subtotalAmount ? parseFloat(subtotalAmount.amount) : localSubtotal;
   const shopifyTotal = totalAmount ? parseFloat(totalAmount.amount) : shopifySubtotal;
 
-  // Discount rate from last Shopify response — applied to localSubtotal so gap and total
-  // update instantly with qty changes without waiting for the next API response.
-  const discountRate = shopifySubtotal > 0.01
-    ? Math.max(0, (shopifySubtotal - shopifyTotal) / shopifySubtotal)
+  // Discount = the gap between the RAW item subtotal (localSubtotal) and Shopify's final total.
+  // We must use localSubtotal (not subtotalAmount) as the base: for PRODUCT-level discounts
+  // (e.g. "35% off product X") Shopify reduces subtotalAmount ITSELF, so subtotalAmount − total
+  // would be 0 and the discount would never show. localSubtotal is always the pre-discount amount,
+  // so this catches product-level AND order-level discounts. (When there's no discount, shopifyTotal
+  // falls back to localSubtotal → rate 0 → total stays responsive to qty taps.)
+  const discountRate = localSubtotal > 0.01
+    ? Math.max(0, Math.min(1, (localSubtotal - shopifyTotal) / localSubtotal))
     : 0;
   const discountGap = Math.max(0, localSubtotal * discountRate);
   const optimisticTotal = Math.max(0, localSubtotal - discountGap);

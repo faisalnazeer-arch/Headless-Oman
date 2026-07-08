@@ -194,9 +194,17 @@ export async function loader({ params, request, context }: LoaderFunctionArgs) {
     else if (key === "filter.v.price.gte")    priceMin = parseFloat(value);
     else if (key === "filter.v.price.lte")    priceMax = parseFloat(value);
   }
-  if (priceMin !== undefined || priceMax !== undefined) {
-    productFilters.push({ price: { ...(priceMin !== undefined ? { min: priceMin } : {}), ...(priceMax !== undefined ? { max: priceMax } : {}) } });
-  }
+  // ALWAYS exclude zero-price products (free-gift items like "Free NZ Beef Mince"). They must not
+  // appear as OMR 0 products in the grid AND must not inflate the facet counts — that mismatch
+  // caused "New Zealand (6)" in the sidebar while only 3 real products showed ("3 of 6"). A price
+  // floor of 0.01 drops products whose only variants are free; facet counts then reflect the 3
+  // real products. Respects a user-set price min/max on top of the floor.
+  productFilters.push({
+    price: {
+      min: Math.max(0.01, priceMin ?? 0),
+      ...(priceMax !== undefined ? { max: priceMax } : {}),
+    },
+  });
 
   const data = await context.storefront.query(COLLECTION_QUERY, {
     variables: {

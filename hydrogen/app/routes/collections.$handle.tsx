@@ -335,10 +335,17 @@ export default function Collection() {
   useEffect(() => {
     const fd = fetcher.data as ReturnType<typeof useLoaderData<typeof loader>> | undefined;
     if (!fd?.collection?.products?.edges) return;
+    // Guard against STALE fetcher results from a different filter/sort/collection context.
+    // React Router revalidates active fetchers after a navigation: applying a filter re-runs the
+    // previous Load-More fetch with its OLD (e.g. unfiltered) URL, which would otherwise leak
+    // unfiltered products (Brazil/South Africa) into the now-filtered (New Zealand) grid. Only
+    // append when the fetched page belongs to the CURRENT loaderKey.
+    const fdKey = `${fd.collection.id}|${fd.sortIdx}|${(fd.appliedFilters ?? []).join("§")}`;
+    if (fdKey !== loaderKey) return;
     setExtraEdges((prev) => [...prev, ...fd.collection.products.edges]);
     setCursor(fd.pageInfo.endCursor ?? null);
     setHasMore(fd.pageInfo.hasNextPage);
-  }, [fetcher.data]);
+  }, [fetcher.data, loaderKey]);
 
   const handleLoadMore = () => {
     if (!cursor || fetcher.state !== "idle") return;

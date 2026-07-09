@@ -57,6 +57,17 @@ export async function loader({ context }: LoaderFunctionArgs) {
     `> ${DESCRIPTION}`,
     "",
     "This is an llms.txt file, meant for consumption by LLMs.",
+    "",
+    "## Site Information",
+    "- Brand Name: Muscat Livestock",
+    `- Website: ${SITE_URL}`,
+    "- Primary Market: Oman",
+    "- Language: English",
+    "- Currency: OMR",
+    "- Contact Email: contactus@mls.om",
+    "- Primary Products: beef, lamb, mutton, poultry, camel, seasoned & sauces, value boxes, gift cards",
+    "- Key Product Attributes: fresh and frozen halal meats, grass-fed options, wagyu beef, black angus beef, bone-in and boneless cuts, burger patties, mishkak & fondue cubes, whole carcass, dry-aged, one-hour delivery across Muscat",
+    "- Target Audience: home shoppers buying meat online, customers seeking halal red meat, buyers looking for fresh meat delivery in Muscat, customers purchasing beef and lamb cuts for cooking, customers looking for premium wagyu or angus beef",
   ];
 
   if (pages.length) out.push("", "## Pages", ...pages.map((p: any) => link(p.title, `/pages/${p.handle}`)));

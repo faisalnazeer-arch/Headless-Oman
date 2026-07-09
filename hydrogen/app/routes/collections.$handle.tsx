@@ -164,6 +164,18 @@ export function shouldRevalidate({ currentUrl, nextUrl }: ShouldRevalidateFuncti
   return !(sameHandle && sameSort && sameFilters);
 }
 
+// IDs-only count query — same filters as the grid, up to 250, used to show the accurate total.
+const COLLECTION_COUNT_QUERY = `#graphql
+  query CollectionCount($handle: String!, $filters: [ProductFilter!], $language: LanguageCode, $country: CountryCode)
+  @inContext(language: $language, country: $country) {
+    collection(handle: $handle) {
+      products(first: 250, filters: $filters) {
+        edges { node { id } }
+      }
+    }
+  }
+` as const;
+
 export async function loader({ params, request, context }: LoaderFunctionArgs) {
   const language = detectLanguage(request);
   const { handle } = params;
@@ -206,25 +218,38 @@ export async function loader({ params, request, context }: LoaderFunctionArgs) {
     },
   });
 
-  const data = await context.storefront.query(COLLECTION_QUERY, {
-    variables: {
-      handle,
-      first: PAGE_SIZE,
-      after,
-      sortKey,
-      reverse,
-      filters: productFilters,
-      language,
-      country: "OM" as const,
-    },
-    cache: context.storefront.CacheShort(),
-  });
+  // Main page (PAGE_SIZE) + a lightweight IDs-only count query (same filters) so the header can
+  // show the TOTAL matching the filters ("24 of 43"), not just the loaded page ("24 of 24+").
+  // Runs in parallel so it adds ~no latency; capped at 250 (shown as "250+" for huge sets).
+  const [data, countData] = await Promise.all([
+    context.storefront.query(COLLECTION_QUERY, {
+      variables: {
+        handle,
+        first: PAGE_SIZE,
+        after,
+        sortKey,
+        reverse,
+        filters: productFilters,
+        language,
+        country: "OM" as const,
+      },
+      cache: context.storefront.CacheShort(),
+    }),
+    context.storefront.query(COLLECTION_COUNT_QUERY, {
+      variables: { handle, filters: productFilters, language, country: "OM" as const },
+      cache: context.storefront.CacheShort(),
+    }).catch(() => null),
+  ]);
   if (!data.collection) throw new Response("Not found", { status: 404 });
+
+  const totalCount: number | null =
+    (countData as any)?.collection?.products?.edges?.length ?? null;
 
   return {
     collection: data.collection,
     sortIdx,
     appliedFilters,
+    totalCount,
     availableFilters: (data.collection.products.filters ?? []) as FilterGroup[],
     pageInfo: data.collection.products.pageInfo as { hasNextPage: boolean; endCursor: string | null },
   };
@@ -307,7 +332,7 @@ export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
 
 /* ─── Main route component ────────────────────────────────────────────────── */
 export default function Collection() {
-  const { collection, sortIdx, appliedFilters, availableFilters, pageInfo } = useLoaderData<typeof loader>();
+  const { collection, sortIdx, appliedFilters, availableFilters, pageInfo, totalCount } = useLoaderData<typeof loader>();
   const t = useT();
 
   const navigate    = useNavigate();
@@ -456,7 +481,7 @@ export default function Collection() {
               </button>
               {/* Count — desktop only inline */}
               <span className="hidden items-center gap-2 text-sm text-muted-foreground lg:flex">
-                {filtered.length} {t("collection.products_of")} {allProducts.length} {t("collection.products_label")}{hasMore ? "+" : ""}
+                {filtered.length} {t("collection.products_of")} {totalCount ?? allProducts.length} {t("collection.products_label")}{(totalCount ?? 0) >= 250 ? "+" : ""}
                 {isLoading && <Loader2 className="h-3.5 w-3.5 animate-spin text-crimson" />}
               </span>
               {/* Right: Sort */}

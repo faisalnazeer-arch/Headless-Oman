@@ -17,7 +17,7 @@ interface JudgemeReviewsProps {
 }
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-AE", { year: "numeric", month: "short", day: "numeric" });
+  return new Date(iso).toLocaleDateString("en-GB", { year: "numeric", month: "short", day: "numeric", timeZone: "Asia/Muscat" });
 }
 
 function RatingBar({ label, count, total }: { label: string; count: number; total: number }) {

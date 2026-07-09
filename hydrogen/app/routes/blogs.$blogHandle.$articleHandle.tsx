@@ -66,7 +66,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 };
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-AE", { year: "numeric", month: "long", day: "numeric" });
+  return new Date(iso).toLocaleDateString("en-GB", { year: "numeric", month: "long", day: "numeric", timeZone: "Asia/Muscat" });
 }
 
 export default function ArticlePage() {

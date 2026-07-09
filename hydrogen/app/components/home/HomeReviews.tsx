@@ -38,10 +38,11 @@ function ReviewCard({ review }: { review: JudgemeReview }) {
           <div>
             <p className="text-sm font-semibold text-foreground">{review.reviewer.name}</p>
             <p className="text-xs text-muted-foreground">
-              {new Date(review.created_at).toLocaleDateString("en-AE", {
+              {new Date(review.created_at).toLocaleDateString("en-GB", {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
+                timeZone: "Asia/Muscat",
               })}
             </p>
           </div>

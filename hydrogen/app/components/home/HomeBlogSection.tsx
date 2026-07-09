@@ -39,10 +39,11 @@ function BlogCard({ article }: { article: BlogArticle }) {
       <div className="flex flex-1 flex-col p-5">
         <div className="mb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
           <Calendar className="h-3.5 w-3.5 shrink-0" />
-          {new Date(article.publishedAt).toLocaleDateString("en-AE", {
+          {new Date(article.publishedAt).toLocaleDateString("en-GB", {
             year: "numeric",
             month: "short",
             day: "numeric",
+            timeZone: "Asia/Muscat",
           })}
         </div>
         <h3 className="mb-2 font-display text-base font-bold leading-snug">{article.title}</h3>

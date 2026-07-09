@@ -140,6 +140,7 @@ export const ProductCard = memo(function ProductCard({ product, onQuickView, rat
         {onQuickView && (
           <button
             type="button"
+            aria-label={`${t("product.quick_view")} — ${node.title}`}
             onClick={(e) => { e.preventDefault(); onQuickView(product); }}
             className="absolute inset-x-3 bottom-3 inline-flex items-center justify-center gap-2 rounded-sm bg-charcoal/90 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-off-white opacity-0 backdrop-blur transition-opacity duration-300 group-hover:opacity-100"
           >

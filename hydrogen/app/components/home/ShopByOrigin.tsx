@@ -98,8 +98,10 @@ export function ShopByOrigin({ section }: Props) {
 
         {/* Tabs */}
         {categories.length > 1 && (
-          <div className="mb-2 flex justify-center md:mb-3">
-            <div className="flex gap-2 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="relative mb-2 md:mb-3">
+            {/* Left-aligned + scrollable on mobile so the last tab (e.g. Venison) isn't center-clipped;
+                centered on desktop where they fit. Right-edge fade hints that more tabs exist. */}
+            <div className="flex justify-start gap-2 overflow-x-auto px-1 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:justify-center">
               {categories.map((tab) => {
                 const isActive = activeTab === tab;
                 return (
@@ -119,6 +121,8 @@ export function ShopByOrigin({ section }: Props) {
                 );
               })}
             </div>
+            {/* Scroll hint (mobile only): fade on the right edge signals more origin tabs. */}
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background to-transparent md:hidden" />
           </div>
         )}
 

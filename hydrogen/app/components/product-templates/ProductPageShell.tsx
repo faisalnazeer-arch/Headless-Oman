@@ -1162,9 +1162,16 @@ export function ProductPageShell({
 
       {/* Breadcrumb */}
       {(() => {
-        const category = (product.collections?.nodes ?? []).find(
+        // Pick a real CATEGORY collection for the breadcrumb, skipping marketing/campaign
+        // collections (e.g. "VISA PROMO 25% OFF", sale/festive/bundle/gift/FIFA/Eid) so the
+        // breadcrumb reads Home / Beef / … regardless of how the user reached the product.
+        const PROMO_RE = /promo|sale|offer|%\s*off|visa|fifa|eid|festive|deal|clearance|flash|limited|bundle|gift|discount/i;
+        const collections = (product.collections?.nodes ?? []).filter(
           (c: any) => c.handle && c.handle !== "all" && c.handle !== "frontpage"
         );
+        const category =
+          collections.find((c: any) => !PROMO_RE.test(c.handle) && !PROMO_RE.test(c.title ?? "")) ??
+          collections[0];
         return (
           <div className="container mx-auto px-4 py-3">
             <nav className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -1216,6 +1223,7 @@ export function ProductPageShell({
                     const isActive = i === activeMediaIdx;
                     return (
                       <button key={i} type="button" onClick={() => setActiveMediaIdx(i)}
+                        aria-label={media.type === "image" ? `View image ${i + 1}` : `Play video ${i + 1}`}
                         className={`relative h-11 w-11 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all duration-200 md:h-16 md:w-16 ${
                           isActive
                             ? "border-crimson shadow-[inset_0_0_0_1px_rgba(180,0,0,0.25)]"

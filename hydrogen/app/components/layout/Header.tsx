@@ -455,7 +455,7 @@ function MobileMenuDrawer({
           {mobileBanners.map((banner, idx) => (
             <Link key={banner.id} to={lp(banner.url)} onClick={onClose} prefetch="intent"
               className="relative flex-1 overflow-hidden rounded-xl">
-              <img src={cdnImg(banner.imageUrl, 300)} alt={banner.altText}
+              <img src={cdnImg(banner.imageUrl, 300)} alt={banner.altText || banner.heading || "Muscat Livestock offer"}
                 className="h-24 w-full object-cover" loading={idx === 0 ? "eager" : "lazy"} />
               {(banner.heading || banner.highlight) && (
                 <div className="absolute inset-0 flex flex-col justify-center bg-gradient-to-r from-black/50 to-transparent pl-3 pr-1">

@@ -86,7 +86,7 @@ function ReelCard({ reel: r, onOpen }: { reel: ReelProduct; onOpen: () => void }
       {r.poster && (
         <img
           src={shopifyImageUrl(r.poster, 400)}
-          alt={r.title}
+          alt={r.title || "MLS reel"}
           loading="lazy"
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${r.videoUrl ? "group-hover:opacity-0" : ""}`}
         />
@@ -259,7 +259,7 @@ function ReelSlide({
             className="h-full w-full"
           />
         ) : reel.poster ? (
-          <img src={reel.poster} alt={reel.title} className="h-full w-full object-cover" />
+          <img src={reel.poster} alt={reel.title || "MLS reel"} className="h-full w-full object-cover" />
         ) : null}
 
         {/* Bottom gradient for legibility */}
@@ -271,7 +271,7 @@ function ReelSlide({
             {thumb && (
               <img
                 src={shopifyImageUrl(thumb, 120)}
-                alt={reel.title}
+                alt={reel.title || "MLS reel"}
                 className="h-14 w-14 shrink-0 rounded-xl object-cover"
               />
             )}

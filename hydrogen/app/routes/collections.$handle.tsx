@@ -511,7 +511,7 @@ export default function Collection() {
             </div>
             {/* Count — mobile only, below the row */}
             <p className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground lg:hidden">
-              {filtered.length} {t("collection.products_of")} {allProducts.length} {t("collection.products_label")}{hasMore ? "+" : ""}
+              {filtered.length} {t("collection.products_of")} {totalCount ?? allProducts.length} {t("collection.products_label")}{(totalCount ?? 0) >= 250 ? "+" : ""}
               {isLoading && <Loader2 className="h-3 w-3 animate-spin text-crimson" />}
             </p>
           </div>

@@ -3,6 +3,7 @@ import { detectLanguage } from "~/lib/locale";
 import { redirect } from "@shopify/remix-oxygen";
 import type { ShouldRevalidateFunctionArgs } from "react-router";
 import { useLoaderData, Await, useRouteError, isRouteErrorResponse } from "react-router";
+import { Analytics } from "@shopify/hydrogen";
 import { Suspense } from "react";
 import { type ShopifyProduct } from "~/lib/shopify";
 import { fetchJudgemeReviews, fetchJudgemeRating, buildRatingSummary } from "~/lib/judgeme";
@@ -631,11 +632,33 @@ export function ErrorBoundary() {
 export default function Product() {
   const { templateSuffix, lazyData, reviews, reviewsTotalCount, rating, ...criticalProps } = useLoaderData<typeof loader>();
 
+  // Shopify product_viewed → Admin product analytics. Defensive: handles both edges/nodes
+  // variant shapes and falls back to priceRange; guarded on product.id so it never throws.
+  const product = (criticalProps as any).product;
+  const firstVariant = product?.variants?.nodes?.[0] ?? product?.variants?.edges?.[0]?.node;
+
   return (
-    <Suspense fallback={renderTemplate(templateSuffix, { ...criticalProps, reviews, reviewsTotalCount, rating, ...EMPTY_LAZY })}>
-      <Await resolve={lazyData}>
-        {(lazy) => renderTemplate(templateSuffix, { ...criticalProps, reviews, reviewsTotalCount, rating, ...lazy })}
-      </Await>
-    </Suspense>
+    <>
+      {product?.id && (
+        <Analytics.ProductView
+          data={{
+            products: [{
+              id: product.id,
+              title: product.title ?? "",
+              price: firstVariant?.price?.amount ?? product?.priceRange?.minVariantPrice?.amount ?? "0",
+              vendor: product.vendor ?? "",
+              variantId: firstVariant?.id ?? product.id,
+              variantTitle: firstVariant?.title ?? "",
+              quantity: 1,
+            }],
+          }}
+        />
+      )}
+      <Suspense fallback={renderTemplate(templateSuffix, { ...criticalProps, reviews, reviewsTotalCount, rating, ...EMPTY_LAZY })}>
+        <Await resolve={lazyData}>
+          {(lazy) => renderTemplate(templateSuffix, { ...criticalProps, reviews, reviewsTotalCount, rating, ...lazy })}
+        </Await>
+      </Suspense>
+    </>
   );
 }

@@ -4,6 +4,7 @@ import { useT, type TKey } from "~/i18n/strings";
 import type { LoaderFunctionArgs, MetaFunction } from "@shopify/remix-oxygen";
 import type { ShouldRevalidateFunctionArgs } from "react-router";
 import { useLoaderData, useNavigate, useNavigation, useFetcher, useRouteError, isRouteErrorResponse } from "react-router";
+import { Analytics } from "@shopify/hydrogen";
 import { SlidersHorizontal, X, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import type { ShopifyProduct } from "~/lib/shopify";
 import { ProductCard } from "~/components/product/ProductCard";
@@ -449,6 +450,8 @@ export default function Collection() {
 
   return (
     <div className="bg-background min-h-screen">
+      {/* Shopify collection_viewed → Admin product/collection analytics */}
+      <Analytics.CollectionView data={{ collection: { id: collection.id, handle: (collection as any).handle ?? "" } }} />
       <div className="border-b border-border bg-card px-4 py-8 md:py-10">
         <div className="container mx-auto text-center">
           <h1 className="font-display text-2xl font-bold leading-snug tracking-tight md:text-3xl">{collection.title}</h1>

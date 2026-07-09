@@ -23,7 +23,7 @@ export function ShopByCuts({ section }: Props) {
             </span>
             <span className="h-px w-6 rounded-full bg-gradient-brand" />
           </div>
-          <h2 className="font-display text-2xl font-bold leading-snug tracking-tight text-gradient-brand md:text-3xl">
+          <h2 className="font-display text-2xl font-bold leading-snug tracking-tight md:text-3xl">
             {section.heading}
           </h2>
         </div>

@@ -112,6 +112,30 @@ body.atc-expanded .richpanel-launcher {
   z-index: 20 !important;
 }
 
+/* Keep the Richpanel chat launcher on the RIGHT even on Arabic (dir="rtl") pages. Without this it
+   mirrors to the left in RTL, so it appeared "sometimes left, sometimes right". direction:ltr makes
+   its logical positioning resolve to the right; left/right pin the launcher container. */
+#richpanel-root,
+#rp-messenger-container,
+[id^="richpanel"],
+[id^="rp-"],
+.richpanel-launcher {
+  direction: ltr !important;
+}
+#richpanel-root,
+#rp-messenger-container {
+  right: 20px !important;
+  left: auto !important;
+}
+
+/* Hide the Secomapp / UpPromote "Refer & Earn" floating widget — it overlapped the sticky
+   Add-to-Cart bar. Referral sign-up is still available on the /refer-a-friend page (Yotpo). */
+.sca_aff_customer_refer_container,
+.sca_aff_customer_refer_button,
+.sca_aff_customer_refer_icon {
+  display: none !important;
+}
+
 /* Language toggle active state — driven by html[lang] set from cookie via
    inline <head> script, so it's correct before React even renders (no flash) */
 :root[lang="en"] .locale-btn[data-locale="en"],

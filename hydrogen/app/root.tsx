@@ -932,9 +932,9 @@ function DataLayerRouteTracker() {
 // (PageView / ViewContent / AddToCart / Purchase …) to fbq / ttq / snaptr once these globals exist,
 // so filling in an ID below is the ONLY change needed at go-live.
 const PIXEL_IDS = {
-  meta: "",      // Meta (Facebook) Pixel ID   — e.g. "1234567890123456"
+  meta: "251581732573542",      // Meta (Facebook) Pixel ID (Oman — "Muscat Livestock")
   tiktok: "",    // TikTok Pixel ID            — e.g. "CXXXXXXXXXXXXXXXXXXX"
-  snapchat: "",  // Snapchat Pixel ID          — e.g. "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  snapchat: "087693df-9e2f-4a99-83a1-fd395c452b1d",  // Snapchat Pixel ID (Oman)
 };
 
 // Vendor install snippets (verbatim), parameterized by ID. Only built for pixels that have an ID.

@@ -196,19 +196,9 @@ const CART_GIFT_CARD_CODES_UPDATE = `
   }
 `;
 
-// The domain that actually serves Shopify checkout. `mls.om` is served by Oxygen (this
-// Hydrogen app), which has no /cart/c/* route — so a checkoutUrl on mls.om renders our own
-// 404. Until mls.om is attached to the Hydrogen storefront *through Shopify* (which auto-routes
-// checkout paths to Shopify), we pin the checkout host to the myshopify domain, which Shopify
-// always serves. Matches PUBLIC_CHECKOUT_DOMAIN. Remove this pin once the branded checkout
-// domain is live on Shopify.
-const CHECKOUT_HOST = "muscat-livestock.myshopify.com";
-
 function formatCheckoutUrl(checkoutUrl: string): string {
   try {
     const url = new URL(checkoutUrl);
-    // Re-host any storefront-domain checkout link onto the Shopify-served checkout domain.
-    if (url.hostname !== CHECKOUT_HOST) url.hostname = CHECKOUT_HOST;
     url.searchParams.set("channel", "online_store");
     return url.toString();
   } catch {
@@ -848,12 +838,7 @@ export const useCartStore = create<CartStore>()(
 
       clearCart: () => set({ items: [], cartId: null, checkoutUrl: null, ...EMPTY }),
 
-      // Re-host through formatCheckoutUrl at click time too, so carts persisted in
-      // localStorage before the checkout-domain fix still get a working checkout URL.
-      getCheckoutUrl: () => {
-        const u = get().checkoutUrl;
-        return u ? formatCheckoutUrl(u) : null;
-      },
+      getCheckoutUrl: () => get().checkoutUrl,
 
       syncCart: async () => {
         const { cartId, isSyncing, clearCart } = get();

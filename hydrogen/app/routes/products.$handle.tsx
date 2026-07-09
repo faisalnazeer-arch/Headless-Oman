@@ -558,6 +558,12 @@ export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
   const currency = firstVariant?.price?.currencyCode ?? product?.priceRange?.minVariantPrice?.currencyCode ?? "OMR";
   const inStock = product?.availableForSale !== false;
 
+  // Star rating for rich results — read from the product's review metafields (reviews.rating /
+  // rating_count). Kept on THIS (single) Product schema so we don't emit a duplicate block.
+  const mf = (product?.metafields ?? []) as Array<{ key?: string; value?: string } | null>;
+  const ratingVal = parseFloat(mf.find((m) => m?.key === "rating")?.value ?? "0");
+  const ratingCount = parseInt(mf.find((m) => m?.key === "rating_count")?.value ?? "0", 10);
+
   const jsonLd = {
     "@context": "https://schema.org/",
     "@type": "Product",
@@ -566,6 +572,9 @@ export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
     url: canonical,
     ...(image ? { image: [image] } : {}),
     brand: { "@type": "Brand", name: "MLS Oman" },
+    ...(ratingVal > 0 && ratingCount > 0
+      ? { aggregateRating: { "@type": "AggregateRating", ratingValue: ratingVal.toFixed(1), reviewCount: ratingCount } }
+      : {}),
     offers: variants.length
       ? variants.map((v: any) => ({
           "@type": "Offer",

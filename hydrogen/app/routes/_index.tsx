@@ -523,21 +523,34 @@ const WEBSITE_JSON_LD = {
   },
 };
 
-export const meta: MetaFunction = () => [
-  { title: "Fresh meat delivered in 1-hour slots until 10:00 PM - MLS Oman" },
-  { name: "description", content: "Fresh premium meat delivered within 1–2 hours across Muscat. Order halal beef, lamb, chicken & more with fast, hygienic doorstep delivery." },
-  { property: "og:type", content: "website" },
-  { property: "og:title", content: "Fresh meat delivered in 1-hour slots until 10:00 PM - MLS Oman" },
-  { property: "og:description", content: "Fresh premium meat delivered within 1–2 hours across Muscat. Order halal beef, lamb, chicken & more with fast, hygienic doorstep delivery." },
-  { property: "og:url", content: "https://mls.om/" },
-  { property: "og:image", content: "https://mls.om/cdn/shop/files/logo_97c8d848-b3ec-4a82-a68e-dcedc161529c.png?v=1711022728" },
-  { property: "og:image:width", content: "1080" },
-  { property: "og:image:height", content: "1080" },
-  { tagName: "link", rel: "canonical", href: "https://mls.om/" },
-  { "script:ld+json": HOME_JSON_LD },
-  { "script:ld+json": WEBSITE_JSON_LD },
-  { "script:ld+json": LOCAL_BUSINESS_JSON_LD },
-];
+export const meta: MetaFunction = ({ location }) => {
+  const isAr = (location?.pathname ?? "/").startsWith("/ar");
+  const enUrl = "https://mls.om/";
+  const arUrl = "https://mls.om/ar";
+  const canonical = isAr ? arUrl : enUrl;
+  const title = isAr
+    ? "لحوم طازجة توصل خلال ساعة عبر مسقط، عُمان | MLS"
+    : "Fresh Meat Delivered in 1 Hour Across Muscat — MLS Oman";
+  const description = isAr
+    ? "اطلب لحوم حلال طازجة — بقري، ضأن، دجاج والمزيد — مع توصيل سريع خلال ساعة عبر مسقط، عُمان."
+    : "Fresh premium meat delivered within 1 hour across Muscat. Order halal beef, lamb, chicken & more with fast, hygienic doorstep delivery.";
+  const ogImage = "https://mls.om/cdn/shop/files/logo_97c8d848-b3ec-4a82-a68e-dcedc161529c.png?v=1711022728";
+  return [
+    { title },
+    { name: "description", content: description },
+    { property: "og:type", content: "website" },
+    { property: "og:title", content: title },
+    { property: "og:description", content: description },
+    { property: "og:url", content: canonical },
+    { property: "og:image", content: ogImage },
+    { property: "og:image:width", content: "1080" },
+    { property: "og:image:height", content: "1080" },
+    { tagName: "link", rel: "canonical", href: canonical },
+    { "script:ld+json": HOME_JSON_LD },
+    { "script:ld+json": WEBSITE_JSON_LD },
+    { "script:ld+json": LOCAL_BUSINESS_JSON_LD },
+  ];
+};
 
 
 function pickReels(edges: any[]): ReelProduct[] {

@@ -293,7 +293,11 @@ export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
   // Prefer the Shopify SEO fields (Search engine listing), fall back to the collection's own title/description.
   const title = seo?.title?.trim() || `${data?.collection?.title ?? "Collection"} — MLS Oman`;
   const description = seo?.description?.trim() || data?.collection?.description || "";
-  const image = (data?.collection as any)?.image?.url as string | undefined;
+  // Use the collection's own image; fall back to the MLS logo so every collection has an OG image
+  // for social sharing (most collections have no image set).
+  const image =
+    ((data?.collection as any)?.image?.url as string | undefined) ??
+    "https://mls.om/cdn/shop/files/logo_97c8d848-b3ec-4a82-a68e-dcedc161529c.png?v=1711022728";
   const canonical = `https://mls.om${location.pathname}`;
 
   const breadcrumbLd = {
@@ -322,7 +326,7 @@ export const meta: MetaFunction<typeof loader> = ({ data, location }) => {
     { property: "og:type", content: "website" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
-    ...(image ? [{ property: "og:image", content: image }] : []),
+    { property: "og:image", content: image },
     { property: "og:url", content: canonical },
     { tagName: "link", rel: "canonical", href: canonical },
     { "script:ld+json": breadcrumbLd },

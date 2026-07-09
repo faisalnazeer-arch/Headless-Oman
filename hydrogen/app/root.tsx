@@ -563,6 +563,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const loaderData = useRouteLoaderData<typeof loader>("root");
   const locale = loaderData?.locale ?? "en";
   const dir = locale === "ar" ? "rtl" : "ltr";
+
+  // hreflang alternates for every page — English at /path, Arabic at /ar/path, so Google serves
+  // the right language per market. Computed from the current path (query strings stripped).
+  const location = useLocation();
+  const basePath = (location.pathname || "/").replace(/^\/ar(?=\/|$)/, "") || "/";
+  const enHref = `https://mls.om${basePath}`;
+  const arHref = `https://mls.om/ar${basePath === "/" ? "" : basePath}`;
   return (
     <html lang={locale} dir={dir} suppressHydrationWarning>
       <head>
@@ -595,6 +602,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta property="og:site_name" content="MLS Oman" />
         <meta property="og:locale" content={locale === "ar" ? "ar_AR" : "en_US"} />
         <meta name="twitter:card" content="summary_large_image" />
+        {/* hreflang alternates (site-wide) */}
+        <link rel="alternate" hrefLang="en" href={enHref} />
+        <link rel="alternate" hrefLang="ar" href={arHref} />
+        <link rel="alternate" hrefLang="x-default" href={enHref} />
         <Meta />
         <Links />
         {/* Google Tag Manager */}

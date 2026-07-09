@@ -1133,26 +1133,11 @@ export function ProductPageShell({
     templateSuffix === "box-collections"? "About This Box"  :
     "Understanding Rubs"; // all rubs templates
 
-  // JSON-LD structured data
-  const jsonLd: Record<string, any> = {
-    "@context": "https://schema.org", "@type": "Product",
-    name: product.title,
-    image: images[0]?.url ?? "",
-    brand: { "@type": "Brand", name: product.vendor ?? "MLS Oman" },
-    offers: {
-      "@type": "Offer",
-      price: displayPrice?.amount ?? "0",
-      priceCurrency: currency,
-      availability: variants.some((v: any) => v.availableForSale) ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-    },
-  };
-  if (displayRating.average > 0 && displayCount > 0) {
-    jsonLd.aggregateRating = { "@type": "AggregateRating", ratingValue: displayRating.average.toFixed(1), reviewCount: displayCount };
-  }
+  // NOTE: Product JSON-LD is emitted once, in the route meta (products.$handle.tsx), to avoid a
+  // duplicate @type:Product block on the page (SEO). Do not re-add a schema <script> here.
 
   return (
     <div className="bg-background min-h-screen pb-20">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       {/* Breadcrumb */}
       {(() => {

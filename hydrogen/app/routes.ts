@@ -62,6 +62,9 @@ export default hydrogenRoutes([
   route('ar/sitemap_blogs.xml', 'routes/sitemap-resource.tsx', { id: 'sm-ar-blogs' }),
   route('robots.txt', 'routes/robots[.]txt.tsx'),
   route('llms.txt', 'routes/llms[.]txt.tsx'),
+  // Shopify Agentic Commerce discovery (AI shopping agents) — mirrored from Shopify onto mls.om.
+  route('sitemap_agentic_discovery.xml', 'routes/sitemap_agentic_discovery[.]xml.tsx'),
+  route('agents.md', 'routes/agents[.]md.tsx'),
   route('customer_authentication/redirect', 'routes/customer_authentication.redirect.tsx'),
   route('search', 'routes/search.tsx', { id: 'search' }),
   route('collections', 'routes/collections._index.tsx'),

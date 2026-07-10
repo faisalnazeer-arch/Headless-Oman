@@ -47,6 +47,7 @@ Disallow: /*/recommendations/products
 Disallow: /apps/
 Disallow: /api/
 Sitemap: https://mls.om/sitemap.xml
+Sitemap: https://mls.om/sitemap_agentic_discovery.xml
 
 User-agent: adsbot-google
 Disallow: /checkouts/

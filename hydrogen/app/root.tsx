@@ -1069,6 +1069,40 @@ function AnalyticsWithCart({
   );
 }
 
+// Oman has no cookie-consent legal requirement, so Shopify shows no banner and auto-resolves
+// consent WITHOUT firing `visitorConsentCollected`. Hydrogen's analytics subscriber waits for that
+// event before sending ANY event to Monorail — so without this, nothing from Hydrogen fires (only
+// the consent script's own telemetry reaches Shopify, which is why sessions worked but funnel events
+// didn't). Explicitly grant tracking consent once the Customer Privacy API loads → fires the event →
+// unblocks page_view / product / collection / cart analytics.
+function GrantTrackingConsent() {
+  useEffect(() => {
+    let tries = 0;
+    const id = setInterval(() => {
+      const cp = (window as unknown as { Shopify?: { customerPrivacy?: any } }).Shopify?.customerPrivacy;
+      if (cp?.setTrackingConsent) {
+        clearInterval(id);
+        try {
+          const c = cp.currentVisitorConsent?.();
+          const alreadyGranted = c && c.analytics === true;
+          if (!alreadyGranted) {
+            cp.setTrackingConsent(
+              { analytics: true, marketing: true, preferences: true, sale_of_data: true },
+              () => {},
+            );
+          }
+        } catch {
+          /* ignore — never break the page */
+        }
+      } else if (++tries > 60) {
+        clearInterval(id); // give up after ~12s
+      }
+    }, 200);
+    return () => clearInterval(id);
+  }, []);
+  return null;
+}
+
 export default function App() {
   const data = useLoaderData<typeof loader>();
   const { mainMenu, secondaryMenu, mobileMenu, mobileCategoriesMenu, footerSettings, footerMenuCols, announcementMessages, navItemImages, mobileBanners } = data;
@@ -1082,6 +1116,7 @@ export default function App() {
         <LocaleSync />
         <DataLayerRouteTracker />
         <MarketingPixels />
+        <GrantTrackingConsent />
         <CartSyncWrapper />
         <RichpanelWidget />
         <div className="flex min-h-screen flex-col">

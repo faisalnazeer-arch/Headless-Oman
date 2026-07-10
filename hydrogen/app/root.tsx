@@ -30,7 +30,7 @@ const QuickBuyDrawer = lazy(() =>
 );
 import { Toaster } from "./components/ui/sonner";
 import { useCartSync } from "./hooks/useCartSync";
-import { useCartStore, setCartAddPublish } from "./stores/cartStore";
+import { useCartStore } from "./stores/cartStore";
 import { useLocaleStore, dirFor } from "./stores/localeStore";
 import { detectLanguage } from "./lib/locale";
 import { applyArImages } from "./lib/arImages";
@@ -1011,24 +1011,55 @@ function MarketingPixels() {
   return null;
 }
 
-// Bridges the Zustand cart's add-to-cart into Shopify analytics. useAnalytics() only works inside
-// <Analytics.Provider>, so this render-null component (mounted there) hands publish + shop to the
-// cart store via setCartAddPublish. See fireAddToCartAnalytics in stores/cartStore.ts.
-function CartAddAnalyticsBridge() {
+// Emits Shopify's product_added_to_cart from INSIDE the Analytics.Provider React lifecycle (the
+// only place it works — publishing from the Zustand store, outside React, is silently dropped).
+// Observes the cart store and, in a useEffect, publishes for every newly-added or quantity-increased
+// line. Read-only w.r.t. the cart; free gifts (price 0) and pending lines are skipped.
+function CartAddAnalyticsObserver() {
+  const items = useCartStore((s) => s.items);
+  const cartId = useCartStore((s) => s.cartId);
   const { publish, shop, customData } = useAnalytics();
+  const prevQtyRef = useRef<Map<string, number> | null>(null);
   useEffect(() => {
+    const cur = new Map<string, number>();
+    for (const i of items) {
+      if (i.lineId && !i.isPending && parseFloat(i.price?.amount ?? "0") > 0) cur.set(i.lineId, i.quantity);
+    }
+    const prev = prevQtyRef.current;
+    prevQtyRef.current = cur;
+    if (prev === null || !cartId) return; // skip the initial hydration pass
     const pub = publish as unknown as (e: string, p: Record<string, unknown>) => void;
-    setCartAddPublish((payload) => {
+    for (const i of items) {
+      if (!i.lineId || i.isPending) continue;
+      if (parseFloat(i.price?.amount ?? "0") <= 0) continue; // skip free gifts
+      const added = i.quantity - (prev.get(i.lineId) ?? 0);
+      if (added <= 0) continue; // only adds / quantity increases
+      const node = (i.product?.node ?? {}) as any;
       try {
-        // TEMP DIAGNOSTIC — remove once confirmed
-        console.log("[mls:atc] bridge publish", { shopId: (shop as any)?.shopId, currency: (shop as any)?.currency, pubType: typeof pub });
-        pub("product_added_to_cart", { ...payload, shop, customData });
-      } catch (e) {
-        console.warn("[mls:atc] bridge publish threw", e);
-      }
-    });
-    return () => setCartAddPublish(null);
-  }, [publish, shop, customData]);
+        pub("product_added_to_cart", {
+          cart: { id: cartId },
+          currentLine: {
+            id: i.lineId,
+            quantity: added,
+            merchandise: {
+              id: i.variantId,
+              title: i.variantTitle ?? "",
+              sku: "",
+              price: { amount: i.price?.amount ?? "0", currencyCode: i.price?.currencyCode ?? "OMR" },
+              product: {
+                id: node.id ?? "",
+                title: node.title ?? "",
+                vendor: node.vendor ?? "",
+                productType: node.productType ?? "",
+              },
+            },
+          },
+          shop,
+          customData,
+        });
+      } catch { /* analytics must never affect the cart */ }
+    }
+  }, [items, cartId, publish, shop, customData]);
   return null;
 }
 
@@ -1045,7 +1076,7 @@ export default function App() {
         <LocaleSync />
         <DataLayerRouteTracker />
         <MarketingPixels />
-        <CartAddAnalyticsBridge />
+        <CartAddAnalyticsObserver />
         <CartSyncWrapper />
         <RichpanelWidget />
         <div className="flex min-h-screen flex-col">

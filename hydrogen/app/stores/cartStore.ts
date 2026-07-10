@@ -567,53 +567,6 @@ async function syncFreeGifts(
   }
 }
 
-// ── Shopify product_added_to_cart analytics bridge ──────────────────────────────
-// Analytics.Provider lives in root.tsx; a bridge component there calls setCartAddPublish so this
-// store can emit Shopify's product_added_to_cart event (funnel: viewed → ADDED → checkout). A
-// module ref is used because this Zustand store can't call React hooks. Fully guarded — it only
-// READS cart data and can never affect add/remove/quantity/checkout; any failure just skips the
-// event. Hydrogen's own sender also no-ops if a field is missing.
-let _cartAddPublish: ((payload: Record<string, any>) => void) | null = null;
-export function setCartAddPublish(fn: ((payload: Record<string, any>) => void) | null) {
-  _cartAddPublish = fn;
-}
-function fireAddToCartAnalytics(
-  cartId: string | null,
-  item: Omit<CartItem, "lineId" | "isPending">,
-  lineId: string | null | undefined,
-) {
-  const node = (item.product?.node ?? {}) as any;
-  // TEMP DIAGNOSTIC — remove once add-to-cart analytics confirmed
-  console.log("[mls:atc] fireAddToCartAnalytics", {
-    hasPublish: !!_cartAddPublish, cartId, lineId,
-    productId: node.id, title: node.title, price: item.price?.amount,
-  });
-  if (!_cartAddPublish || !cartId || !lineId) return;
-  try {
-    _cartAddPublish({
-      cart: { id: cartId },
-      currentLine: {
-        id: lineId,
-        quantity: item.quantity,
-        merchandise: {
-          id: item.variantId,
-          title: item.variantTitle ?? "",
-          sku: "",
-          price: { amount: item.price?.amount ?? "0", currencyCode: item.price?.currencyCode ?? "OMR" },
-          product: {
-            id: node.id ?? "",
-            title: node.title ?? "",
-            vendor: node.vendor ?? "",
-            productType: node.productType ?? "",
-          },
-        },
-      },
-    });
-  } catch {
-    /* analytics must never affect the cart */
-  }
-}
-
 export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
@@ -678,7 +631,6 @@ export const useCartStore = create<CartStore>()(
                   ),
                 });
                 toast.success("Added to cart", { description: item.product.node.title });
-                fireAddToCartAnalytics(result.cartId, item, result.lineId);
               } else {
                 const remaining = get().items.filter((i) => !(i.variantId === item.variantId && i.isPending));
                 const errorMsg = _lastAddError ?? "Could not add to cart. Please try again.";
@@ -711,7 +663,6 @@ export const useCartStore = create<CartStore>()(
                     : i
                 ),
               });
-              fireAddToCartAnalytics(cartId, item, existing.lineId);
             } else if (result.cartNotFound) {
               clearCart();
             } else {
@@ -741,7 +692,6 @@ export const useCartStore = create<CartStore>()(
                 ),
               });
               toast.success("Added to cart", { description: item.product.node.title });
-              fireAddToCartAnalytics(cartId, item, result.lineId);
             } else if (result.cartNotFound) {
               // Cart expired — reset silently; don't show empty open drawer
               clearCart();

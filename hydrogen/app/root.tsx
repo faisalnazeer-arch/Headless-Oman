@@ -12,8 +12,8 @@ import {
   isRouteErrorResponse,
 } from "react-router";
 import type { LinksFunction, LoaderFunctionArgs, ShouldRevalidateFunctionArgs } from "react-router";
-import { useEffect, useRef, lazy, Suspense } from "react";
-import { useNonce, Analytics, getShopAnalytics, useAnalytics } from "@shopify/hydrogen";
+import { useEffect, useRef, useMemo, lazy, Suspense } from "react";
+import { useNonce, Analytics, getShopAnalytics } from "@shopify/hydrogen";
 import styles from "./styles.css?url";
 import { pushDataLayer } from "./lib/dataLayer";
 import mlsLogo from "./assets/mls-logo.png";
@@ -1011,72 +1011,77 @@ function MarketingPixels() {
   return null;
 }
 
-// Emits Shopify's product_added_to_cart from INSIDE the Analytics.Provider React lifecycle (the
-// only place it works — publishing from the Zustand store, outside React, is silently dropped).
-// Observes the cart store and, in a useEffect, publishes for every newly-added or quantity-increased
-// line. Read-only w.r.t. the cart; free gifts (price 0) and pending lines are skipped.
-function CartAddAnalyticsObserver() {
-  const items = useCartStore((s) => s.items);
+// Canonical cart analytics: build a Shopify-cart-shaped object from the Zustand store and pass it
+// to <Analytics.Provider cart>. Hydrogen's own CartAnalytics then diffs lines (by id + quantity) and
+// publishes cart_updated / product_added_to_cart / product_removed_from_cart FROM ITS OWN useEffect —
+// the same internal path page_view uses (so it actually fires, unlike a manual publish). A wrapper
+// keeps this subscription local: `children` come from App (which doesn't subscribe to the cart), so
+// only this component + the provider re-render on cart changes, not the whole tree.
+function AnalyticsWithCart({
+  shop,
+  consent,
+  children,
+}: {
+  shop: unknown;
+  consent: unknown;
+  children: React.ReactNode;
+}) {
+  const cartItems = useCartStore((s) => s.items);
   const cartId = useCartStore((s) => s.cartId);
-  const { publish, shop, customData } = useAnalytics();
-  const prevQtyRef = useRef<Map<string, number> | null>(null);
-  useEffect(() => {
-    const cur = new Map<string, number>();
-    for (const i of items) {
-      if (i.lineId && !i.isPending && parseFloat(i.price?.amount ?? "0") > 0) cur.set(i.lineId, i.quantity);
-    }
-    const prev = prevQtyRef.current;
-    prevQtyRef.current = cur;
-    if (prev === null || !cartId) return; // skip the initial hydration pass
-    const pub = publish as unknown as (e: string, p: Record<string, unknown>) => void;
-    for (const i of items) {
-      if (!i.lineId || i.isPending) continue;
-      if (parseFloat(i.price?.amount ?? "0") <= 0) continue; // skip free gifts
-      const added = i.quantity - (prev.get(i.lineId) ?? 0);
-      if (added <= 0) continue; // only adds / quantity increases
-      const node = (i.product?.node ?? {}) as any;
-      try {
-        pub("product_added_to_cart", {
-          cart: { id: cartId },
-          currentLine: {
-            id: i.lineId,
-            quantity: added,
-            merchandise: {
-              id: i.variantId,
-              title: i.variantTitle ?? "",
-              sku: "",
-              price: { amount: i.price?.amount ?? "0", currencyCode: i.price?.currencyCode ?? "OMR" },
-              product: {
-                id: node.id ?? "",
-                title: node.title ?? "",
-                vendor: node.vendor ?? "",
-                productType: node.productType ?? "",
-              },
+  const analyticsCart = useMemo(() => {
+    if (!cartId) return null;
+    const lines = cartItems
+      .filter((i) => i.lineId && !i.isPending)
+      .map((i) => {
+        const node = (i.product?.node ?? {}) as any;
+        return {
+          id: i.lineId,
+          quantity: i.quantity,
+          merchandise: {
+            id: i.variantId,
+            title: i.variantTitle ?? "",
+            sku: "",
+            price: { amount: i.price?.amount ?? "0", currencyCode: i.price?.currencyCode ?? "OMR" },
+            product: {
+              id: node.id ?? "",
+              title: node.title ?? "",
+              vendor: node.vendor ?? "",
+              productType: node.productType ?? "",
             },
           },
-          shop,
-          customData,
-        });
-      } catch { /* analytics must never affect the cart */ }
-    }
-  }, [items, cartId, publish, shop, customData]);
-  return null;
+        };
+      });
+    // Content-based updatedAt: changes when the lines change, but stable across reloads so
+    // Hydrogen's localStorage dedup doesn't fire false "added" events on every refresh.
+    const updatedAt = lines.length ? lines.map((l) => `${l.id}:${l.quantity}`).join("|") : "empty";
+    return { id: cartId, updatedAt, lines: { nodes: lines } };
+  }, [cartItems, cartId]);
+
+  return (
+    <Analytics.Provider
+      cart={analyticsCart as never}
+      shop={shop as never}
+      consent={consent as never}
+      canTrack={() => true}
+    >
+      {children}
+    </Analytics.Provider>
+  );
 }
 
 export default function App() {
   const data = useLoaderData<typeof loader>();
   const { mainMenu, secondaryMenu, mobileMenu, mobileCategoriesMenu, footerSettings, footerMenuCols, announcementMessages, navItemImages, mobileBanners } = data;
   return (
-    // Analytics.Provider emits page_view / product_view etc. to Shopify (feeds Admin analytics:
-    // sessions, conversion, traffic sources). cart={null} — the cart is managed by the Zustand
-    // store, not Hydrogen's cart context; page/product/collection views drive sessions regardless.
-    <Analytics.Provider cart={null} shop={data.shop} consent={data.consent} canTrack={() => true}>
+    // AnalyticsWithCart wraps Analytics.Provider and feeds it the Zustand cart so Hydrogen emits the
+    // full funnel to Shopify: page_view + product/collection/search views + cart_updated /
+    // product_added_to_cart / product_removed_from_cart (all from Hydrogen's own lifecycle).
+    <AnalyticsWithCart shop={data.shop} consent={data.consent}>
       <QueryClientProvider client={queryClient}>
         <PageLoader />
         <LocaleSync />
         <DataLayerRouteTracker />
         <MarketingPixels />
-        <CartAddAnalyticsObserver />
         <CartSyncWrapper />
         <RichpanelWidget />
         <div className="flex min-h-screen flex-col">
@@ -1091,6 +1096,6 @@ export default function App() {
         <Suspense fallback={null}><QuickBuyDrawer /></Suspense>
         <Toaster position="top-center" />
       </QueryClientProvider>
-    </Analytics.Provider>
+    </AnalyticsWithCart>
   );
 }

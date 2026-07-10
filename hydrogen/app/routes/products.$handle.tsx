@@ -3,7 +3,7 @@ import { detectLanguage } from "~/lib/locale";
 import { redirect } from "@shopify/remix-oxygen";
 import type { ShouldRevalidateFunctionArgs } from "react-router";
 import { useLoaderData, Await, useRouteError, isRouteErrorResponse } from "react-router";
-import { Analytics } from "@shopify/hydrogen";
+import { ShopifyProductView } from "~/lib/shopifyAnalytics";
 import { Suspense } from "react";
 import { type ShopifyProduct } from "~/lib/shopify";
 import { fetchJudgemeReviews, fetchJudgemeRating, buildRatingSummary } from "~/lib/judgeme";
@@ -632,26 +632,23 @@ export function ErrorBoundary() {
 export default function Product() {
   const { templateSuffix, lazyData, reviews, reviewsTotalCount, rating, ...criticalProps } = useLoaderData<typeof loader>();
 
-  // Shopify product_viewed → Admin product analytics. Defensive: handles both edges/nodes
-  // variant shapes and falls back to priceRange; guarded on product.id so it never throws.
+  // Shopify product_viewed → Admin product analytics. Uses the direct sender: Hydrogen's built-in
+  // <Analytics.ProductView> silently no-ops behind its hasUserConsent gate (see lib/shopifyAnalytics).
+  // Defensive: handles both edges/nodes variant shapes and falls back to priceRange.
   const product = (criticalProps as any).product;
   const firstVariant = product?.variants?.nodes?.[0] ?? product?.variants?.edges?.[0]?.node;
 
   return (
     <>
       {product?.id && (
-        <Analytics.ProductView
-          data={{
-            products: [{
-              id: product.id,
-              title: product.title ?? "",
-              price: firstVariant?.price?.amount ?? product?.priceRange?.minVariantPrice?.amount ?? "0",
-              vendor: product.vendor ?? "",
-              variantId: firstVariant?.id ?? product.id,
-              variantTitle: firstVariant?.title ?? "",
-              quantity: 1,
-            }],
-          }}
+        <ShopifyProductView
+          productGid={product.id}
+          title={product.title ?? ""}
+          vendor={product.vendor ?? ""}
+          productType={product.productType ?? ""}
+          price={firstVariant?.price?.amount ?? product?.priceRange?.minVariantPrice?.amount ?? "0"}
+          variantGid={firstVariant?.id ?? product.id}
+          variantTitle={firstVariant?.title ?? ""}
         />
       )}
       <Suspense fallback={renderTemplate(templateSuffix, { ...criticalProps, reviews, reviewsTotalCount, rating, ...EMPTY_LAZY })}>

@@ -582,9 +582,14 @@ function fireAddToCartAnalytics(
   item: Omit<CartItem, "lineId" | "isPending">,
   lineId: string | null | undefined,
 ) {
+  const node = (item.product?.node ?? {}) as any;
+  // TEMP DIAGNOSTIC — remove once add-to-cart analytics confirmed
+  console.log("[mls:atc] fireAddToCartAnalytics", {
+    hasPublish: !!_cartAddPublish, cartId, lineId,
+    productId: node.id, title: node.title, price: item.price?.amount,
+  });
   if (!_cartAddPublish || !cartId || !lineId) return;
   try {
-    const node = (item.product?.node ?? {}) as any;
     _cartAddPublish({
       cart: { id: cartId },
       currentLine: {

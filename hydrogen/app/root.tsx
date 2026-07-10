@@ -1020,9 +1020,11 @@ function CartAddAnalyticsBridge() {
     const pub = publish as unknown as (e: string, p: Record<string, unknown>) => void;
     setCartAddPublish((payload) => {
       try {
+        // TEMP DIAGNOSTIC — remove once confirmed
+        console.log("[mls:atc] bridge publish", { shopId: (shop as any)?.shopId, currency: (shop as any)?.currency, pubType: typeof pub });
         pub("product_added_to_cart", { ...payload, shop, customData });
-      } catch {
-        /* noop — analytics must never surface an error to the cart */
+      } catch (e) {
+        console.warn("[mls:atc] bridge publish threw", e);
       }
     });
     return () => setCartAddPublish(null);

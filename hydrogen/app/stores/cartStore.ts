@@ -550,8 +550,14 @@ async function syncFreeGifts(
             : s.items.filter((i) => !(i.variantId === rule.variantId && i.isPending)),
         }));
       } else if (!want && has?.lineId) {
+        const giftSnapshot = has;
         set((s) => ({ items: s.items.filter((i) => i.variantId !== rule.variantId) }));
-        await removeLineFromShopifyCart(cartId, has.lineId);
+        const res = await removeLineFromShopifyCart(cartId, has.lineId);
+        // If Shopify still has the gift (removal failed, not a cart-gone case), restore it locally
+        // so the drawer doesn't diverge from what checkout will show.
+        if (!res.success && !res.cartNotFound) {
+          set((s) => (s.items.some((i) => i.variantId === rule.variantId) ? s : { items: [...s.items, giftSnapshot] }));
+        }
       }
     }
 
@@ -767,13 +773,25 @@ export const useCartStore = create<CartStore>()(
         // Guard: prevent duplicate queued call for the same line
         if (removingLineIds.includes(lineId)) return;
 
-        // Find the item now — needed for targeted revert if the API fails
-        const removedItem = get().items.find((i) => i.lineId === lineId);
+        // Find the item now (and its position) — needed for targeted revert if the API fails
+        const removedIndex = get().items.findIndex((i) => i.lineId === lineId);
+        const removedItem = removedIndex >= 0 ? get().items[removedIndex] : undefined;
         if (!removedItem) return;
 
         const prevSubtotal = get().subtotalAmount;
         const prevTotal = get().totalAmount;
         const nextItems = get().items.filter((i) => i.lineId !== lineId);
+
+        // Restore the removed item at (roughly) its original position on API failure — not at the
+        // bottom. No-op if a concurrent step already re-added it, and never touches other lines.
+        const restore = () => set((s) => {
+          if (s.items.some((i) => i.lineId === lineId)) {
+            return { items: s.items, subtotalAmount: prevSubtotal, totalAmount: prevTotal };
+          }
+          const items = [...s.items];
+          items.splice(Math.min(removedIndex, items.length), 0, removedItem);
+          return { items, subtotalAmount: prevSubtotal, totalAmount: prevTotal };
+        });
 
         // Optimistic: remove from UI immediately — no waiting for API
         set({
@@ -814,25 +832,13 @@ export const useCartStore = create<CartStore>()(
               clearCart();
 
             } else {
-              // API rejected — restore only this specific item (not the whole old snapshot)
+              // API rejected — restore only this specific item (at its original position),
               // so other successfully-deleted items stay gone
-              set((s) => ({
-                items: s.items.some((i) => i.lineId === lineId)
-                  ? s.items
-                  : [...s.items, removedItem],
-                subtotalAmount: prevSubtotal,
-                totalAmount: prevTotal,
-              }));
+              restore();
             }
           } catch {
             // Network / unexpected error — restore just this item
-            set((s) => ({
-              items: s.items.some((i) => i.lineId === lineId)
-                ? s.items
-                : [...s.items, removedItem],
-              subtotalAmount: prevSubtotal,
-              totalAmount: prevTotal,
-            }));
+            restore();
           } finally {
             set((s) => ({ removingLineIds: s.removingLineIds.filter((id) => id !== lineId) }));
           }

@@ -749,11 +749,14 @@ export const useCartStore = create<CartStore>()(
             } else if (result.cartNotFound) {
               clearCart();
             } else {
-              // Revert on failure
-              set({ items: get().items.map((i) => i.lineId === lineId ? { ...i, quantity: prevQty } : i) });
+              // Revert on failure — but ONLY if a newer tap hasn't already changed this line's
+              // quantity in the meantime. Reverting to our captured prevQty unconditionally would
+              // clobber the newer value (whose own queued mutation will reconcile it) and leave the
+              // drawer showing fewer units than Shopify actually has.
+              set((s) => ({ items: s.items.map((i) => i.lineId === lineId && i.quantity === quantity ? { ...i, quantity: prevQty } : i) }));
             }
           } catch {
-            set({ items: get().items.map((i) => i.lineId === lineId ? { ...i, quantity: prevQty } : i) });
+            set((s) => ({ items: s.items.map((i) => i.lineId === lineId && i.quantity === quantity ? { ...i, quantity: prevQty } : i) }));
           }
         });
       },

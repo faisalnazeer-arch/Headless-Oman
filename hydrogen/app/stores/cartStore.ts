@@ -469,7 +469,6 @@ function makeGiftItem(variantId: string): CartItem {
 }
 
 let _giftSyncing = false;
-let _isCreatingCart = false;
 // Debounce handle so rapid actions only trigger one gift sync pass
 let _giftSyncTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -606,22 +605,36 @@ export const useCartStore = create<CartStore>()(
             })],
           },
         });
-        const { items, cartId, clearCart } = get();
-        const existing = items.find(
-          (i) => i.variantId === item.variantId && (i.sellingPlanId ?? null) === (item.sellingPlanId ?? null)
-        );
+        const { clearCart } = get();
+        const sameLine = (i: CartItem) =>
+          i.variantId === item.variantId && (i.sellingPlanId ?? null) === (item.sellingPlanId ?? null);
 
-        try {
-          if (!cartId) {
-            // Guard: prevent two simultaneous createShopifyCart calls (rapid double-tap)
-            if (_isCreatingCart) return;
-            _isCreatingCart = true;
-            try {
-              // Open drawer immediately — don't make the user wait for cart creation
-              set({
-                items: [{ ...item, lineId: null, isPending: true }, ...get().items],
-                isOpen: true,
-              });
+        // ── Immediate optimistic UI (keeps the cart instant — NEVER waits on the network) ──
+        // Bump an existing line, or insert a new pending line; open the drawer right away.
+        const existing = get().items.find(sameLine);
+        if (existing) {
+          set({
+            items: get().items.map((i) => sameLine(i) ? { ...i, quantity: i.quantity + item.quantity, isPending: true } : i),
+            isOpen: true,
+          });
+        } else {
+          set({
+            items: [{ ...item, lineId: null, isPending: true }, ...get().items],
+            isOpen: true,
+          });
+        }
+
+        // ── Network reconciliation, SERIALIZED with every other cart mutation ──────────────
+        // Runs after any in-flight create/update/remove/gift-sync so Shopify never gets
+        // concurrent mutations on the same cart, a 2nd add is never dropped (cart created by a
+        // prior queued add is seen here), and quantity is synced from fresh state (no stale reads).
+        enqueueCartMutation(async () => {
+          try {
+            const cartId = get().cartId;
+            const line = get().items.find(sameLine);
+
+            if (!cartId) {
+              // First add on a fresh cart → create it with this line.
               const result = await createShopifyCart({ ...item, lineId: null });
               if (result) {
                 set({
@@ -630,96 +643,64 @@ export const useCartStore = create<CartStore>()(
                   subtotalAmount: result.subtotalAmount,
                   totalAmount: result.totalAmount,
                   addItemError: null,
-                  items: get().items.map((i) =>
-                    i.variantId === item.variantId && i.isPending
-                      ? { ...i, lineId: result.lineId, isPending: false }
-                      : i
-                  ),
+                  items: get().items.map((i) => sameLine(i) && i.isPending ? { ...i, lineId: result.lineId, isPending: false } : i),
                 });
                 toast.success("Added to cart", { description: item.product.node.title });
               } else {
-                const remaining = get().items.filter((i) => !(i.variantId === item.variantId && i.isPending));
+                const remaining = get().items.filter((i) => !(sameLine(i) && i.isPending));
                 const errorMsg = _lastAddError ?? "Could not add to cart. Please try again.";
                 console.warn("[cart] Cart creation failed for variant", item.variantId, "—", errorMsg);
-                set({ items: remaining, isOpen: false, addItemError: errorMsg });
+                set({ items: remaining, isOpen: remaining.length > 0, addItemError: errorMsg });
               }
-            } finally {
-              _isCreatingCart = false;
-            }
-          } else if (existing) {
-            const newQty = existing.quantity + item.quantity;
-            if (!existing.lineId) return;
-            // Optimistic qty update + open drawer immediately
-            set({
-              items: get().items.map((i) =>
-                i.variantId === item.variantId && i.sellingPlanId === item.sellingPlanId
-                  ? { ...i, quantity: newQty, isPending: true }
-                  : i
-              ),
-              isOpen: true,
-            });
-            const result = await updateShopifyCartLine(cartId, existing.lineId, newQty);
-            if (result.success) {
-              set({
-                subtotalAmount: result.subtotalAmount ?? get().subtotalAmount,
-                totalAmount: result.totalAmount ?? get().totalAmount,
-                items: get().items.map((i) =>
-                  i.variantId === item.variantId && i.sellingPlanId === item.sellingPlanId
-                    ? { ...i, isPending: false }
-                    : i
-                ),
-              });
-            } else if (result.cartNotFound) {
-              clearCart();
+            } else if (line?.lineId) {
+              // Existing confirmed line → sync Shopify to the CURRENT optimistic quantity.
+              const target = line.quantity;
+              const result = await updateShopifyCartLine(cartId, line.lineId, target);
+              if (result.success) {
+                set({
+                  subtotalAmount: result.subtotalAmount ?? get().subtotalAmount,
+                  totalAmount: result.totalAmount ?? get().totalAmount,
+                  items: get().items.map((i) => sameLine(i) ? { ...i, isPending: false } : i),
+                });
+              } else if (result.cartNotFound) {
+                clearCart();
+              } else {
+                // Undo only this add's units (guarded so we never drop below 1); syncCart heals the rest.
+                set({ items: get().items.map((i) => sameLine(i) ? { ...i, quantity: Math.max(1, i.quantity - item.quantity), isPending: false } : i) });
+              }
             } else {
-              set({
-                items: get().items.map((i) =>
-                  i.variantId === item.variantId && i.sellingPlanId === item.sellingPlanId
-                    ? { ...i, quantity: existing.quantity, isPending: false }
-                    : i
-                ),
-              });
+              // New line on an existing cart (the optimistic pending item).
+              const result = await addLineToShopifyCart(cartId, { ...item, lineId: null });
+              if (result.success) {
+                set({
+                  subtotalAmount: result.subtotalAmount ?? get().subtotalAmount,
+                  totalAmount: result.totalAmount ?? get().totalAmount,
+                  addItemError: null,
+                  items: get().items.map((i) => sameLine(i) && i.isPending ? { ...i, lineId: result.lineId ?? null, isPending: false } : i),
+                });
+                toast.success("Added to cart", { description: item.product.node.title });
+              } else if (result.cartNotFound) {
+                clearCart();
+                set({ isOpen: false });
+              } else {
+                const msg = (result as any).message ?? "Could not add to cart";
+                const remaining = get().items.filter((i) => !(sameLine(i) && i.isPending));
+                set({ items: remaining, isOpen: remaining.length > 0, addItemError: msg });
+              }
             }
-          } else {
-            set({
-              items: [{ ...item, lineId: null, isPending: true }, ...get().items],
-              isOpen: true,
+          } catch (err) {
+            console.warn("[cart] addItem threw:", err);
+            // Roll back: drop genuinely-new pending lines (no lineId); un-pend the rest (e.g. bumped
+            // existing lines) rather than deleting them.
+            set((s) => {
+              const items = s.items.filter((i) => !(i.isPending && !i.lineId)).map((i) => i.isPending ? { ...i, isPending: false } : i);
+              return { items, isOpen: items.length > 0, addItemError: "Could not add to cart. Please try again." };
             });
-            const result = await addLineToShopifyCart(cartId, { ...item, lineId: null });
-            if (result.success) {
-              set({
-                subtotalAmount: result.subtotalAmount ?? get().subtotalAmount,
-                totalAmount: result.totalAmount ?? get().totalAmount,
-                addItemError: null,
-                items: get().items.map((i) =>
-                  i.variantId === item.variantId && i.isPending
-                    ? { ...i, lineId: result.lineId ?? null, isPending: false }
-                    : i
-                ),
-              });
-              toast.success("Added to cart", { description: item.product.node.title });
-            } else if (result.cartNotFound) {
-              // Cart expired — reset silently; don't show empty open drawer
-              clearCart();
-              set({ isOpen: false });
-            } else {
-              const msg = (result as any).message ?? "Could not add to cart";
-              const remaining = get().items.filter((i) => !(i.variantId === item.variantId && i.isPending));
-              set({
-                items: remaining,
-                isOpen: remaining.length > 0,
-                addItemError: msg,
-              });
-            }
+            toast.error("Could not add to cart", { description: "Please check your connection and try again." });
+          } finally {
+            scheduleSyncFreeGifts(get, set);
           }
-        } catch (err) {
-          console.warn("[cart] addItem threw:", err);
-          const remaining = get().items.filter((i) => !i.isPending);
-          set({ items: remaining, isOpen: remaining.length > 0, addItemError: "Could not add to cart. Please try again." });
-          toast.error("Could not add to cart", { description: "Please check your connection and try again." });
-        } finally {
-          scheduleSyncFreeGifts(get, set);
-        }
+        });
       },
 
       updateQuantity: (lineId, quantity) => {

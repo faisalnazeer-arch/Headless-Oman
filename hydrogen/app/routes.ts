@@ -80,6 +80,8 @@ export default hydrogenRoutes([
   route('api/back-in-stock', 'routes/api.back-in-stock.tsx'),
   route('api/newsletter-subscribe', 'routes/api.newsletter-subscribe.tsx'),
   route('api/discounts', 'routes/api.discounts.ts'),
+  // Klaviyo Customer Hub login handshake for the headless storefront (per Klaviyo Support).
+  route('api/authenticateCustomerHub', 'routes/api.authenticateCustomerHub.tsx'),
   route('pages/customer-reviews', 'routes/pages.customer-reviews.tsx'),
   route('pages/contact-us', 'routes/pages.contact.tsx'),
   route('pages/refund-exchange', 'routes/pages.refund-exchange.tsx'),

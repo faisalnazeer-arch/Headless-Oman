@@ -39,6 +39,7 @@ const QuickBuyDrawer = lazy(() =>
 import { Toaster } from "./components/ui/sonner";
 import { useCartSync } from "./hooks/useCartSync";
 import { useCartStore } from "./stores/cartStore";
+import { klaviyoAddedToCart } from "./lib/klaviyo";
 import { useLocaleStore, dirFor } from "./stores/localeStore";
 import { detectLanguage } from "./lib/locale";
 import { applyArImages } from "./lib/arImages";
@@ -1041,6 +1042,7 @@ function MarketingPixels() {
 function CartAddDirectAnalytics() {
   const items = useCartStore((s) => s.items);
   const cartId = useCartStore((s) => s.cartId);
+  const checkoutUrl = useCartStore((s) => s.checkoutUrl);
   const { shop } = useAnalytics();
   const prevQtyRef = useRef<Map<string, number> | null>(null);
 
@@ -1054,6 +1056,16 @@ function CartAddDirectAnalytics() {
 
     const s = shop as { shopId?: string } | null;
     if (prev === null || !cartId || !s?.shopId) return; // skip initial hydration / not ready
+
+    // Cart-wide values for the Klaviyo "Added to Cart" payload.
+    const cartTotal = items.reduce(
+      (sum, it) => sum + parseFloat(it.price?.amount ?? "0") * it.quantity,
+      0,
+    );
+    const itemNames = items
+      .filter((it) => parseFloat(it.price?.amount ?? "0") > 0)
+      .map((it) => (it.product?.node as any)?.title ?? "")
+      .filter(Boolean);
 
     for (const i of items) {
       if (!i.lineId || i.isPending) continue;
@@ -1090,8 +1102,32 @@ function CartAddDirectAnalytics() {
       } catch {
         /* analytics must never affect the cart */
       }
+
+      // Klaviyo "Added to Cart" (headless — not auto-tracked). Separate pipeline from Shopify.
+      try {
+        const handle = node.handle ?? "";
+        klaviyoAddedToCart({
+          addedName: node.title ?? "",
+          addedProductId: node.id ?? "",
+          addedPrice: unitPrice,
+          addedQuantity: added,
+          addedImageUrl:
+            node.images?.edges?.[0]?.node?.url ?? node.images?.nodes?.[0]?.url ?? "",
+          addedUrl:
+            handle && typeof window !== "undefined"
+              ? `${window.location.origin}/products/${handle}`
+              : "",
+          addedBrand: node.vendor ?? "",
+          addedCategory: node.productType ?? "",
+          cartTotal,
+          itemNames,
+          checkoutUrl: checkoutUrl ?? "",
+        });
+      } catch {
+        /* Klaviyo tracking must never affect the cart */
+      }
     }
-  }, [items, cartId, shop]);
+  }, [items, cartId, checkoutUrl, shop]);
 
   return null;
 }

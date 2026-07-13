@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router";
 import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
 import logo from "@/assets/mls-logo.png";
@@ -71,21 +71,6 @@ export function Footer({ settings, menuCols }: Props) {
 
   return (
     <footer className="bg-gradient-footer text-charcoal-foreground">
-      {/* Blend the Klaviyo Footer-signup embed into the dark footer: light text, a clean white
-          input + crimson button, and a sane font size (its default text renders oversized). */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        .klaviyo-embed .klaviyo-form-TXvrLy * { font-size: 15px !important; line-height: 1.5 !important; color: #ffffff !important; background: transparent !important; box-shadow: none !important; }
-        .klaviyo-embed .klaviyo-form-TXvrLy h1,
-        .klaviyo-embed .klaviyo-form-TXvrLy h2,
-        .klaviyo-embed .klaviyo-form-TXvrLy h3,
-        .klaviyo-embed .klaviyo-form-TXvrLy h4 { font-size: 18px !important; line-height: 1.3 !important; margin: 0 0 6px !important; }
-        .klaviyo-embed .klaviyo-form-TXvrLy input,
-        .klaviyo-embed .klaviyo-form-TXvrLy input[type="email"],
-        .klaviyo-embed .klaviyo-form-TXvrLy input[type="text"] { color: #1a1a1a !important; background: #ffffff !important; }
-        .klaviyo-embed .klaviyo-form-TXvrLy input::placeholder { color: #6b7280 !important; }
-        .klaviyo-embed .klaviyo-form-TXvrLy button,
-        .klaviyo-embed .klaviyo-form-TXvrLy [type="submit"] { color: #ffffff !important; background: #8B0000 !important; }
-      ` }} />
       {/* Subtle gold gradient hairline accent at the very top of the footer */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
       <div className="container mx-auto px-4 py-12">
@@ -316,37 +301,13 @@ function NewsletterForm() {
   );
 }
 
-// Footer newsletter — renders the Klaviyo "Footer-signup" embed (Oman account SC5Mtp / form
-// TXvrLy, the same form UAE uses). Klaviyo's on-site JS injects the real form into that div. If
-// it doesn't render within ~6s (e.g. the form's domain targeting blocks this domain), we fall
-// back to the native <NewsletterForm/> so there is ALWAYS an email input. Either way, signups go
-// to the same Klaviyo Footer-signup list.
+// Footer newsletter — the native <NewsletterForm/> ONLY. It subscribes to the Klaviyo
+// "Footer-signup" list (VkBYRU) via app/routes/api.newsletter-subscribe.tsx and always renders,
+// regardless of Klaviyo's on-site JS / form domain targeting. We previously ALSO rendered the
+// Klaviyo on-site embed (klaviyo-form-TXvrLy) with a fallback timer, but the embed and the native
+// form could both show at once → a duplicate signup box in the footer. One reliable form now.
 function FooterNewsletter() {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const [embedLive, setEmbedLive] = useState(false);
-  useEffect(() => {
-    let tries = 0;
-    const id = window.setInterval(() => {
-      const el = wrapRef.current?.querySelector<HTMLElement>(".klaviyo-form-TXvrLy");
-      if (el && el.childElementCount > 0) {
-        setEmbedLive(true);
-        window.clearInterval(id);
-      } else if (++tries > 24) {
-        window.clearInterval(id); // ~6s — keep the native fallback visible
-      }
-    }, 250);
-    return () => window.clearInterval(id);
-  }, []);
-  return (
-    <div ref={wrapRef}>
-      <div
-        className="klaviyo-embed"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: '<div class="klaviyo-form-TXvrLy"></div>' }}
-      />
-      {!embedLive && <NewsletterForm />}
-    </div>
-  );
+  return <NewsletterForm />;
 }
 
 function WhatsAppIcon({ className }: { className?: string }) {

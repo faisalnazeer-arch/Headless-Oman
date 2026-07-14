@@ -1476,6 +1476,45 @@ async function seedDryAged() {
   return { pageId, pageHandle: PAGE };
 }
 
+// Create 4 SHARED icon items (upload images to these once → every page's icons update) and repoint
+// every existing mls_section_icons entry at them. Run via `--shared-icons`.
+async function migrateSharedIcons() {
+  console.log(`\n=== Shared icons migration ===`);
+  const SHARED = [
+    { h: "mls-shared-icon-delivery", name: "Shared Icon: 1HR Fresh Delivery", heading: "1HR FRESH DELIVERY" },
+    { h: "mls-shared-icon-box", name: "Shared Icon: Delivered in Fresh Box", heading: "DELIVERED IN FRESH BOX" },
+    { h: "mls-shared-icon-hormone", name: "Shared Icon: Hormones Free", heading: "HORMONES FREE" },
+    { h: "mls-shared-icon-halal", name: "Shared Icon: Fresh & Halal", heading: "FRESH & HALAL" },
+  ];
+  const ids: Record<string, string> = {};
+  for (const s of SHARED) {
+    const id = await upsertEntry("mls_icon_item", s.h, [{ key: "name", value: s.name }, { key: "heading", value: s.heading }]);
+    if (id) ids[s.h] = id;
+  }
+  // Map: which shared icons each section should show. Most pages have 4; some (beef/lamb/mishkak/
+  // prime/signature/carcass) show 3 (no hormones). Detect by current item count and keep that many.
+  const all = await gql<any>(`{ metaobjects(type:"mls_section_icons", first:50){ nodes{ id handle
+    items: field(key:"items"){ references(first:10){ nodes{ ... on Metaobject { id } } } } } } }`);
+  const four = [ids["mls-shared-icon-delivery"], ids["mls-shared-icon-box"], ids["mls-shared-icon-hormone"], ids["mls-shared-icon-halal"]].filter(Boolean);
+  const three = [ids["mls-shared-icon-delivery"], ids["mls-shared-icon-box"], ids["mls-shared-icon-halal"]].filter(Boolean);
+  let updated = 0;
+  for (const sec of all?.metaobjects?.nodes ?? []) {
+    if ((sec.handle as string)?.startsWith("mls-shared")) continue;
+    const count = sec.items?.references?.nodes?.length ?? 4;
+    const target = count <= 3 ? three : four;
+    const res = await gql<any>(
+      `mutation($id: ID!, $val: String!) {
+         metaobjectUpdate(id: $id, metaobject: { fields: [{ key: "items", value: $val }] }) { userErrors { message } }
+       }`,
+      { id: sec.id, val: JSON.stringify(target) }
+    );
+    if (!(res?.metaobjectUpdate?.userErrors ?? []).length) updated++;
+  }
+  console.log(`✅  Repointed ${updated} icon sections at the 4 shared icon items.`);
+  console.log(`   Now upload your 4 icon images to: mls-shared-icon-delivery/box/hormone/halal`);
+  console.log(`   (Content → Metaobjects → "Landing · Icon Item" → each shared entry → Icon field.)`);
+}
+
 // Seed card items for a card-grid. country_code = flag fallback until an image is uploaded;
 // collection = handle to link (seeded as a manual /collections/<h> link; adjust in admin if needed).
 async function seedCards(prefix: string, cards: { label: string; collection?: string; code?: string }[]) {
@@ -2481,6 +2520,10 @@ async function fixHeroButtonUrlField() {
   await ensurePageMetafieldDefinition();
   if (DEFS_ONLY) {
     console.log("\n✨  Definitions ensured (--defs-only). Done.");
+    return;
+  }
+  if (args.includes("--shared-icons")) {
+    await migrateSharedIcons();
     return;
   }
 

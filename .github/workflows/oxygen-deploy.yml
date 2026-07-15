@@ -3,8 +3,8 @@ name: Deploy to Oxygen
 # Oman storefront (Hydrogen storefront id 1000153258).
 # Branch → Oxygen environment routing is configured in the Hydrogen admin
 # (Storefront → Environments → link a branch to each environment):
-#   main    → Production
-#   staging → Staging
+#   main          → Production
+#   Oman-Stagging → Staging
 # Pull requests create temporary preview deployments.
 #
 # Oxygen auto-injects all PUBLIC_*/PRIVATE_*/SESSION_SECRET vars per environment,
@@ -12,7 +12,7 @@ name: Deploy to Oxygen
 
 on:
   push:
-    branches: [main, staging]
+    branches: [main, Oman-Stagging]
 
 permissions:
   contents: read

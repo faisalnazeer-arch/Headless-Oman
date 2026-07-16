@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useLocation } from "react-router";
 import {
   useAnalytics,
   sendShopifyAnalytics,
@@ -111,6 +112,49 @@ export function ShopifyCollectionView({
       collectionId: collectionGid,
     });
   }, [shop?.shopId, collectionGid]); // eslint-disable-line react-hooks/exhaustive-deps
+  return null;
+}
+
+// Map a pathname to a Shopify AnalyticsPageType (best-effort; the URL in the browser
+// parameters is what actually identifies the page — pageType is a secondary label).
+function pageTypeFor(pathname: string): string {
+  const p = (pathname.replace(/^\/ar(?=\/|$)/, "") || "/");
+  if (p === "/") return AnalyticsPageType.home;
+  if (p.startsWith("/products/")) return AnalyticsPageType.product;
+  if (p === "/collections") return AnalyticsPageType.listCollections;
+  if (p.startsWith("/collections/")) return AnalyticsPageType.collection;
+  if (p.startsWith("/search")) return AnalyticsPageType.search;
+  if (/^\/blogs\/[^/]+\/[^/]+/.test(p)) return AnalyticsPageType.article;
+  if (p.startsWith("/blogs")) return AnalyticsPageType.blog;
+  if (p === "/cart") return AnalyticsPageType.cart;
+  if (p.startsWith("/policies/")) return AnalyticsPageType.policy;
+  if (p.startsWith("/account")) return AnalyticsPageType.customersAccount;
+  return AnalyticsPageType.page;
+}
+
+/**
+ * Fires Shopify `page_viewed` on EVERY route — homepage included — and on SPA navigations,
+ * with hasUserConsent:true so it is NOT dropped by the consent gate. This is the event Shopify
+ * counts for Sessions / page views, and therefore for Conversion Rate (orders ÷ sessions).
+ *
+ * Hydrogen's built-in <Analytics.PageView> can't send here (same hasUserConsent gate documented
+ * at the top of this file), which is why the homepage recorded no page view and sessions
+ * under-counted. Product/collection/search pages already emit their own view events; this adds
+ * the base page view everywhere (standard storefront behaviour — page_viewed fires on every page,
+ * additionally to product_viewed etc.). Render once inside <Analytics.Provider>.
+ */
+export function ShopifyPageView() {
+  const shop = useShop();
+  const location = useLocation();
+  const sent = useRef<string | null>(null);
+  const key = location.pathname + location.search;
+  useEffect(() => {
+    if (!shop?.shopId || sent.current === key) return;
+    sent.current = key;
+    send(AnalyticsEventName.PAGE_VIEW, shop, {
+      pageType: pageTypeFor(location.pathname),
+    });
+  }, [shop?.shopId, key]); // eslint-disable-line react-hooks/exhaustive-deps
   return null;
 }
 

@@ -40,6 +40,7 @@ import { Toaster } from "./components/ui/sonner";
 import { useCartSync } from "./hooks/useCartSync";
 import { useCartStore } from "./stores/cartStore";
 import { klaviyoAddedToCart } from "./lib/klaviyo";
+import { ShopifyPageView } from "./lib/shopifyAnalytics";
 import { useLocaleStore, dirFor } from "./stores/localeStore";
 import { detectLanguage } from "./lib/locale";
 import { applyArImages } from "./lib/arImages";
@@ -1180,6 +1181,7 @@ export default function App() {
         <DataLayerRouteTracker />
         <MarketingPixels />
         <GrantTrackingConsent />
+        <ShopifyPageView />
         <CartAddDirectAnalytics />
         <CartSyncWrapper />
         <RichpanelWidget />

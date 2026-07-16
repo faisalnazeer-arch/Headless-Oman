@@ -1044,8 +1044,13 @@ export function ProductPageShell({
     window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
   }, [selectedVariantId]);
 
-  // GTM dataLayer — view_item (once per product page)
+  // GTM dataLayer — view_item (once per product page). Guard survives the Suspense
+  // fallback→resolved REMOUNT of this shell, which otherwise fires view_item (and thus
+  // Meta ViewContent + GA4 view_item) twice. Keyed on handle → still re-fires on navigation.
   useEffect(() => {
+    const w = window as unknown as { __mlsViewItem?: string };
+    if (w.__mlsViewItem === product.handle) return;
+    w.__mlsViewItem = product.handle;
     pushDataLayer("view_item", {
       ecommerce: {
         currency,

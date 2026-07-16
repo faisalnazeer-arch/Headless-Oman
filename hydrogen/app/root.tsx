@@ -21,6 +21,7 @@ import {
   sendShopifyAnalytics,
   AnalyticsEventName,
   getClientBrowserParameters,
+  useShopifyCookies,
 } from "@shopify/hydrogen";
 import styles from "./styles.css?url";
 import { pushDataLayer } from "./lib/dataLayer";
@@ -1173,6 +1174,16 @@ function GrantTrackingConsent() {
   return null;
 }
 
+// Sets the _shopify_y (visitor, 1yr) and _shopify_s (session, 30min) cookies. WITHOUT this,
+// getClientBrowserParameters() reads EMPTY uniqToken/visitToken, so every Shopify analytics beacon
+// goes out with no visitor/session id — Shopify can't group page-views into sessions and MASSIVELY
+// under-counts Sessions (which inflates the Conversion Rate = orders / sessions). hasUserConsent:true
+// because Oman shows no consent banner (lawful; same basis as our other direct sends).
+function SetShopifyCookies() {
+  useShopifyCookies({ hasUserConsent: true });
+  return null;
+}
+
 export default function App() {
   const data = useLoaderData<typeof loader>();
   const { mainMenu, secondaryMenu, mobileMenu, mobileCategoriesMenu, footerSettings, footerMenuCols, announcementMessages, announcementScrollSeconds, navItemImages, mobileBanners } = data;
@@ -1182,6 +1193,7 @@ export default function App() {
     // prevents any chance of double-counting.
     <Analytics.Provider cart={null} shop={data.shop} consent={data.consent} canTrack={() => true}>
       <QueryClientProvider client={queryClient}>
+        <SetShopifyCookies />
         <PageLoader />
         <LocaleSync />
         <DataLayerRouteTracker />

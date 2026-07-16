@@ -1350,9 +1350,14 @@ export function ProductPageShell({
                   const desired: Record<string, string> = { ...baseSel, [option.name]: value };
                   return variants.find((v: any) => v.selectedOptions.every((o: any) => desired[o.name] === o.value));
                 };
-                // Hide values out of stock for the current selection; keep them all (disabled) if
-                // none are available, so the option never renders empty.
-                const availableValues = option.values.filter((val: any) => exactFor(val)?.availableForSale);
+                // A value shows if ANY in-stock variant carries it — NOT only the exact combo with the
+                // CURRENT other-option selection. Sparse variant matrices (a value reachable only by
+                // changing two options at once, e.g. "Salt & Pepper" needing Style + Rubs both switched)
+                // would otherwise hide reachable values, making the option invisible. Clicking still
+                // snaps to a valid variant (see mv below).
+                const valueInStock = (value: any) =>
+                  variants.some((v: any) => v.availableForSale && v.selectedOptions.some((o: any) => o.name === option.name && o.value === value));
+                const availableValues = option.values.filter((val: any) => valueInStock(val));
                 const hideUnavailable = availableValues.length > 0;
                 return (
                   <div key={option.name}>
@@ -1362,6 +1367,9 @@ export function ProductPageShell({
                         if (hideUnavailable && !availableValues.includes(value)) return null;
                         const mv =
                           exactFor(value) ??
+                          variants.find((v: any) =>
+                            v.availableForSale && v.selectedOptions.some((o: any) => o.name === option.name && o.value === value)
+                          ) ??
                           variants.find((v: any) =>
                             v.selectedOptions.some((o: any) => o.name === option.name && o.value === value)
                           );

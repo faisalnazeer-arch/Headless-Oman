@@ -2,7 +2,6 @@ import { memo, useMemo, useState } from "react";
 import { useLocalePath } from "@/stores/localeStore";
 import { Link } from "react-router";
 import { Bell, BellRing, Eye, Loader2, Tag, X } from "lucide-react";
-import { motion } from "framer-motion";
 import {
   type ShopifyProduct,
   formatPrice,
@@ -82,11 +81,7 @@ export const ProductCard = memo(function ProductCard({ product, onQuickView, rat
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      suppressHydrationWarning
+    <div
       className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-[var(--shadow-card)]"
     >
       {/* ── Image ── */}
@@ -208,7 +203,7 @@ export const ProductCard = memo(function ProductCard({ product, onQuickView, rat
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 });
 

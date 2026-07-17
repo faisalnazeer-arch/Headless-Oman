@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect, type ReactNode } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Link, useMatches } from "react-router";
 import {
   ShoppingBag,
@@ -352,32 +351,18 @@ function cdnImg(url: string, w = 120) {
   return url.includes("?") ? `${url}&width=${w}` : `${url}?width=${w}`;
 }
 
-// Animation variants for staggered list entrance
-const listVariants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.045, delayChildren: 0.06 } },
-};
-const rowVariants = {
-  hidden: { opacity: 0, x: -14 },
-  show:   { opacity: 1, x: 0, transition: { duration: 0.22, ease: "easeOut" } },
-};
-
-// Smooth accordion wrapper using framer-motion height animation
+// Smooth accordion wrapper using CSS max-height transition
 function AccordionBody({ isOpen, children }: { isOpen: boolean; children: ReactNode }) {
   return (
-    <AnimatePresence initial={false}>
-      {isOpen && (
-        <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
-          style={{ overflow: "hidden" }}
-        >
-          {children}
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div
+      style={{
+        maxHeight: isOpen ? "1000px" : "0px",
+        overflow: "hidden",
+        transition: "max-height 0.22s cubic-bezier(0.4, 0, 0.2, 1)",
+      }}
+    >
+      {children}
+    </div>
   );
 }
 
@@ -486,7 +471,7 @@ function MobileMenuDrawer({
 
       {/* ── Scrollable body with stagger entrance ── */}
       <div className="flex-1 overflow-y-auto">
-        <motion.div key={tab1Idx} variants={listVariants} initial="hidden" animate="show">
+        <div key={tab1Idx}>
 
           {isCategories
             ? mobileCatEntries.map((entry) => {
@@ -501,7 +486,7 @@ function MobileMenuDrawer({
                     </div>;
 
                 return (
-                  <motion.div key={entry.id} variants={rowVariants}>
+                  <div key={entry.id}>
                     {hasChildren ? (
                       <button type="button" onClick={() => toggleEntry(entry.id)}
                         className={`flex w-full items-center gap-3 border-b px-4 py-2.5 text-left transition-all duration-150 ${
@@ -593,7 +578,7 @@ function MobileMenuDrawer({
                         </div>
                       </div>
                     </AccordionBody>
-                  </motion.div>
+                  </div>
                 );
               })
 
@@ -616,7 +601,7 @@ function MobileMenuDrawer({
                     </div>;
 
                 return (
-                  <motion.div key={item.id} variants={rowVariants}>
+                  <div key={item.id}>
                     {hasChildren ? (
                       <button type="button" onClick={() => toggleItem(item.id)}
                         className={`flex w-full items-center gap-3 border-b px-4 py-2.5 text-left transition-all duration-150 ${
@@ -646,7 +631,7 @@ function MobileMenuDrawer({
                         ))}
                       </div>
                     </AccordionBody>
-                  </motion.div>
+                  </div>
                 );
               })
           }
@@ -659,7 +644,7 @@ function MobileMenuDrawer({
             const isOpen      = openSecEntries.has(entry.id);
 
             return (
-              <motion.div key={entry.id} variants={rowVariants}>
+              <div key={entry.id}>
                 {hasChildren ? (
                   <button type="button" onClick={() => toggleSecEntry(entry.id)}
                     className={`flex w-full items-center gap-3 border-b px-4 py-2.5 text-left transition-all duration-150 ${
@@ -750,11 +735,11 @@ function MobileMenuDrawer({
                     </div>
                   </div>
                 </AccordionBody>
-              </motion.div>
+              </div>
             );
           })}
 
-        </motion.div>
+        </div>
       </div>
 
       {/* ── Language switcher + Login CTA footer ── */}

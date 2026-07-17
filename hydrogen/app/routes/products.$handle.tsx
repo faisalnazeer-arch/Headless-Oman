@@ -5,21 +5,21 @@ import type { ShouldRevalidateFunctionArgs } from "react-router";
 import { useLoaderData, Await, useRouteError, isRouteErrorResponse } from "react-router";
 import { ShopifyProductView } from "~/lib/shopifyAnalytics";
 import { KlaviyoProductView } from "~/lib/klaviyo";
-import { Suspense } from "react";
+import { Suspense, lazy } from "react";
 import { type ShopifyProduct } from "~/lib/shopify";
 import { fetchJudgemeReviews, fetchJudgemeRating, buildRatingSummary } from "~/lib/judgeme";
 import { extractGloboOptionsFromHtml, type GloboOptionSet } from "~/lib/globo";
 import { sanitizeHtml } from "~/lib/sanitize";
 import { DefaultTemplate } from "~/components/product-templates/DefaultTemplate";
-import { BeefRubsTemplate } from "~/components/product-templates/BeefRubsTemplate";
-import { ChickenRubsTemplate } from "~/components/product-templates/ChickenRubsTemplate";
-import { LambRubsTemplate } from "~/components/product-templates/LambRubsTemplate";
-import { WholeCutsTemplate } from "~/components/product-templates/WholeCutsTemplate";
-import { BoxCollectionsTemplate } from "~/components/product-templates/BoxCollectionsTemplate";
-import { SeasonedMarinadesTemplate } from "~/components/product-templates/SeasonedMarinadesTemplate";
-import { PicanhaCutTemplate } from "~/components/product-templates/PicanhaCutTemplate";
-import { WholeCarcassTemplate } from "~/components/product-templates/WholeCarcassTemplate";
-import { KebabTemplate } from "~/components/product-templates/KebabTemplate";
+const BeefRubsTemplate = lazy(() => import("~/components/product-templates/BeefRubsTemplate").then((m) => ({ default: m.BeefRubsTemplate })));
+const ChickenRubsTemplate = lazy(() => import("~/components/product-templates/ChickenRubsTemplate").then((m) => ({ default: m.ChickenRubsTemplate })));
+const LambRubsTemplate = lazy(() => import("~/components/product-templates/LambRubsTemplate").then((m) => ({ default: m.LambRubsTemplate })));
+const WholeCutsTemplate = lazy(() => import("~/components/product-templates/WholeCutsTemplate").then((m) => ({ default: m.WholeCutsTemplate })));
+const BoxCollectionsTemplate = lazy(() => import("~/components/product-templates/BoxCollectionsTemplate").then((m) => ({ default: m.BoxCollectionsTemplate })));
+const SeasonedMarinadesTemplate = lazy(() => import("~/components/product-templates/SeasonedMarinadesTemplate").then((m) => ({ default: m.SeasonedMarinadesTemplate })));
+const PicanhaCutTemplate = lazy(() => import("~/components/product-templates/PicanhaCutTemplate").then((m) => ({ default: m.PicanhaCutTemplate })));
+const WholeCarcassTemplate = lazy(() => import("~/components/product-templates/WholeCarcassTemplate").then((m) => ({ default: m.WholeCarcassTemplate })));
+const KebabTemplate = lazy(() => import("~/components/product-templates/KebabTemplate").then((m) => ({ default: m.KebabTemplate })));
 
 const PAGE_SETTINGS_QUERY = `
   query {

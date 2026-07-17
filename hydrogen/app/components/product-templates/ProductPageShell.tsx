@@ -1248,7 +1248,9 @@ export function ProductPageShell({
                   allow="autoplay; encrypted-media" allowFullScreen title="Product video" />
               ) : activeMedia?.type === "image" ? (
                 <img src={shopifyImageUrl(activeMedia.url, 800)} alt={activeMedia.altText ?? product.title}
-                  className="h-full w-full object-cover transition-opacity duration-300" key={activeMediaIdx} />
+                  className="h-full w-full object-cover transition-opacity duration-300" key={activeMediaIdx}
+                  fetchPriority={activeMediaIdx === 0 ? "high" : "auto"}
+                  loading={activeMediaIdx === 0 ? "eager" : "lazy"} />
               ) : null}
               <div className="absolute left-3 top-3 flex flex-col gap-1.5">
                 <OriginBadge origin={origin} />

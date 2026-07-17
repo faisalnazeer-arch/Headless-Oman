@@ -29,8 +29,8 @@ import mlsLogo from "./assets/mls-logo.png";
 import mlsFavicon from "./assets/mls-favicon.png";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Header } from "./components/layout/Header";
-import { Footer } from "./components/layout/Footer";
-import { CartDrawer } from "./components/layout/CartDrawer";
+const Footer = lazy(() => import("./components/layout/Footer").then((m) => ({ default: m.Footer })));
+const CartDrawer = lazy(() => import("./components/layout/CartDrawer").then((m) => ({ default: m.CartDrawer })));
 import { AnnouncementBar } from "./components/layout/AnnouncementBar";
 // Lazy: the Quick Buy drawer is an overlay opened only on click, so code-splitting it keeps its
 // JS out of the initial bundle (lower TBT) with no SSR/CLS impact — it's hidden until opened.
@@ -635,8 +635,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {/* Connect early to the CDNs the page depends on: images, and the web fonts a 3rd-party
             app injects (those show up in the critical path, so a preconnect speeds them up) */}
         <link rel="preconnect" href="https://cdn.shopify.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* Critical CSS — inlined before external stylesheet so variables apply on first paint */}
         <style dangerouslySetInnerHTML={{ __html: `
           :root{--radius:.5rem;--crimson:oklch(0.36 0.18 27);--rich-red:oklch(0.52 0.21 28);--off-white:oklch(0.985 0.005 80);--bone:oklch(0.96 0.008 80);--charcoal:oklch(0.18 0.005 240);--charcoal-foreground:oklch(0.985 0.005 60);--gold:oklch(0.74 0.11 80);--background:var(--off-white);--foreground:var(--charcoal);--card:oklch(1 0 0);--card-foreground:var(--charcoal);--border:oklch(0.9 0.008 80);--muted:oklch(0.94 0.006 80);--muted-foreground:oklch(0.45 0.01 60);}
@@ -647,6 +645,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {/* Stylesheet via direct <link> with suppressHydrationWarning — prevents Vite dev-mode
             from adding a ?t= timestamp that mismatches the SSR-rendered href and triggers a
             full hydration failure + client re-render cascade */}
+        <link rel="preload" as="style" href={styles} suppressHydrationWarning />
         <link rel="stylesheet" href={styles} suppressHydrationWarning />
         {/* Inline script — sets lang/dir from cookie before React paints, eliminating Arabic flash */}
         <script dangerouslySetInnerHTML={{ __html: `(function(){try{var m=document.cookie.match(/(?:^|;\\s*)lang=([a-z]{2})/);if(m&&m[1]==='ar'){document.documentElement.lang='ar';document.documentElement.dir='rtl';}}catch(e){}})();` }} />
@@ -714,7 +713,7 @@ fetch('https://monorail-edge.shopifysvc.com/unstable/produce_batch',{method:'POS
         {/* GTM — dataLayer queue is created immediately (events are never lost), but the heavy
             gtm.js loads on first interaction OR a 4s fallback (guaranteed), keeping it off the
             critical path. The Meta/TikTok/Snapchat ad pixels below are NOT deferred. */}
-        <script dangerouslySetInnerHTML={{ __html: `(function(w,d){w.dataLayer=w.dataLayer||[];w.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});var done=false,t;function L(){var j=d.createElement('script');j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=GTM-MNFBCW5';d.head.appendChild(j);}var evts=['scroll','touchstart','mousedown','keydown','mousemove'];function R(){if(done)return;done=true;clearTimeout(t);evts.forEach(function(e){w.removeEventListener(e,R)});L();}evts.forEach(function(e){w.addEventListener(e,R,{passive:true})});t=setTimeout(R,4000);})(window,document);` }} />
+        <script dangerouslySetInnerHTML={{ __html: `(function(w,d){w.dataLayer=w.dataLayer||[];w.dataLayer.push({'gtm.start':new Date().getTime(),event:'gtm.js'});var done=false,t;function L(){var j=d.createElement('script');j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=GTM-MNFBCW5';d.head.appendChild(j);}var evts=['scroll','touchstart','mousedown','keydown','mousemove'];function R(){if(done)return;done=true;clearTimeout(t);evts.forEach(function(e){w.removeEventListener(e,R)});L();}evts.forEach(function(e){w.addEventListener(e,R,{passive:true})});t=setTimeout(R,15000);})(window,document);` }} />
         {/* GA4 ecommerce — headless storefront. GTM (above) sends page_view to GA4 (G-TMJJERF7PS)
             but has no ecommerce event tags, so view_item/add_to_cart never reached GA4. We load an
             ISOLATED gtag (its own dataLayer 'mlsGa4dl', send_page_view:false so it can NOT double the
@@ -727,25 +726,21 @@ fetch('https://monorail-edge.shopifysvc.com/unstable/produce_batch',{method:'POS
              each pixel stays OFF until its ID is set (no UAE IDs are used). ── */}
         {/* Klaviyo — proxy stub so klaviyo.push() is safe before SDK loads */}
         <script dangerouslySetInnerHTML={{ __html: `!function(){if(!window.klaviyo){window._klOnsite=window._klOnsite||[];try{window.klaviyo=new Proxy({},{get:function(n,i){return"push"===i?function(){var n;(n=window._klOnsite).push.apply(n,arguments)}:function(){for(var n=arguments.length,o=new Array(n),w=0;w<n;w++)o[w]=arguments[w];var t="function"==typeof o[o.length-1]?o.pop():void 0,e=new Promise((function(n){window._klOnsite.push([i].concat(o,[function(i){t&&t(i),n(i)}]))}));return e}}})}catch(n){window.klaviyo=window.klaviyo||[],window.klaviyo.push=function(){var n;(n=window._klOnsite).push.apply(n,arguments)}}}}();` }} />
-        {/* Klaviyo Onsite JS — handles forms, page tracking, identify */}
-        <script async src="https://static.klaviyo.com/onsite/js/SC5Mtp/klaviyo.js" />
-        {/* Microsoft Clarity (Oman project w4bzbv3psg — "Muscat Livestock", mls.om) — heatmaps +
-            session recording on the storefront. CSP already allows www.clarity.ms / *.clarity.ms. */}
-        <script dangerouslySetInnerHTML={{ __html: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","w4bzbv3psg");` }} />
-
+        {/* Klaviyo Onsite JS — load on interaction (8s fallback) */}
+        <script dangerouslySetInnerHTML={{ __html: `(function(){function L(){var s=document.createElement("script");s.async=true;s.src="https://static.klaviyo.com/onsite/js/SC5Mtp/klaviyo.js";document.head.appendChild(s);}var done=false;function run(){if(done)return;done=true;EVTS.forEach(function(e){window.removeEventListener(e,run)});clearTimeout(t);L();}var EVTS=["scroll","touchstart","mousedown","keydown","mousemove"];EVTS.forEach(function(e){window.addEventListener(e,run,{passive:true,once:true})});var t=setTimeout(run,8000);})();` }} />
+        {/* Microsoft Clarity (Oman project w4bzbv3psg) — load on interaction (10s fallback) */}
+        <script dangerouslySetInnerHTML={{ __html: `(function(){function L(){(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","w4bzbv3psg");}var done=false;function run(){if(done)return;done=true;EVTS.forEach(function(e){window.removeEventListener(e,run)});clearTimeout(t);L();}var EVTS=["scroll","touchstart","mousedown","keydown","mousemove"];EVTS.forEach(function(e){window.addEventListener(e,run,{passive:true,once:true})});var t=setTimeout(run,10000);})();` }} />
         {/* PushOwl + Brevo — web push notifications */}
         {/* Shim window.Shopify so PushOwl can identify the store in headless mode */}
         <script dangerouslySetInnerHTML={{ __html: `window.Shopify=window.Shopify||{};window.Shopify.shop=window.Shopify.shop||'muscat-livestock.myshopify.com';` }} />
-        {/* PushOwl/Brevo — deferred to idle (guaranteed to load via the timeout fallback) */}
-        <script dangerouslySetInnerHTML={{ __html: `(function(){function L(){var s=document.createElement("script");s.async=true;s.src="https://cdn.shopify.com/extensions/019ef94d-e41a-7e61-9259-faf6609a0254/pushowl-306/assets/pushowl-shopify.js";document.head.appendChild(s);}if("requestIdleCallback"in window){requestIdleCallback(L,{timeout:4000});}else{setTimeout(L,3000);}})();` }} />
+        {/* PushOwl/Brevo — load on interaction (12s fallback) */}
+        <script dangerouslySetInnerHTML={{ __html: `(function(){function L(){var s=document.createElement("script");s.async=true;s.src="https://cdn.shopify.com/extensions/019ef94d-e41a-7e61-9259-faf6609a0254/pushowl-306/assets/pushowl-shopify.js";document.head.appendChild(s);}var done=false;function run(){if(done)return;done=true;EVTS.forEach(function(e){window.removeEventListener(e,run)});clearTimeout(t);L();}var EVTS=["scroll","touchstart","mousedown","keydown","mousemove"];EVTS.forEach(function(e){window.addEventListener(e,run,{passive:true,once:true})});var t=setTimeout(run,12000);})();` }} />
         {/* UpPromote Affiliate (by Secomapp) — the Oman store's affiliate/referral app.
             Replaces Social Snowball (which was the UAE store's app). Referral param: sca_ref. */}
         {/* Customer-referral widget (theme-app-extension asset the live mls.om theme uses). */}
         <link rel="stylesheet" href="https://cdn.shopify.com/extensions/019f02b6-22fe-7246-a7bb-fa2e477ed7f6/affliate-by-secomapp-119/assets/customer-referral.css" />
         <script defer src="https://cdn.shopify.com/extensions/019f02b6-22fe-7246-a7bb-fa2e477ed7f6/affliate-by-secomapp-119/assets/customer-referral.js" />
-        {/* Affiliate conversion pixel — reads the sca_ref referral and attributes orders.
-            The cart store fires upTag('event','cart_updated', {id, checkoutUrl}) on cart
-            changes (see app/stores/cartStore.ts); the cart GID already carries its ?key=. */}
+        {/* Affiliate conversion pixel — reads the sca_ref referral and attributes orders. */}
         <script async src="https://pixel.uppromote.com/collect/v1/collect?shop=muscat-livestock.myshopify.com" />
       </head>
       <body>
@@ -772,6 +767,20 @@ function CartSyncWrapper() {
   return null;
 }
 
+function loadOnInteraction(fn: () => void, fallbackMs: number) {
+  let done = false;
+  function run() {
+    if (done) return;
+    done = true;
+    EVTS.forEach((e) => window.removeEventListener(e, run));
+    clearTimeout(t);
+    fn();
+  }
+  const EVTS = ["scroll", "touchstart", "mousedown", "keydown", "mousemove"] as const;
+  EVTS.forEach((e) => window.addEventListener(e, run, { passive: true, once: true }));
+  const t = setTimeout(run, fallbackMs);
+}
+
 function RichpanelWidget() {
   useEffect(() => {
     if ((window as any).richpanel?.loaded) return;
@@ -789,8 +798,11 @@ function RichpanelWidget() {
       document.head.appendChild(s);
     };
     w.richpanel.ensure_rpuid = "";
-    w.richpanel.load("mlslive1881");
-    w.richpanel.loaded = true;
+    function load() {
+      w.richpanel.load("mlslive1881");
+      w.richpanel.loaded = true;
+    }
+    loadOnInteraction(load, 10000);
   }, []);
 
   useEffect(() => {
@@ -1256,9 +1268,9 @@ export default function App() {
           <main className="flex-1">
             <Outlet />
           </main>
-          <Footer settings={footerSettings} menuCols={footerMenuCols} />
+          <Suspense fallback={null}><Footer settings={footerSettings} menuCols={footerMenuCols} /></Suspense>
         </div>
-        <CartDrawer />
+        <Suspense fallback={null}><CartDrawer /></Suspense>
         <Suspense fallback={null}><QuickBuyDrawer /></Suspense>
         <Toaster position="top-center" />
       </QueryClientProvider>

@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router";
 import { useLocalePath } from "@/stores/localeStore";
 import { useT } from "@/i18n/strings";
-import { motion, AnimatePresence } from "framer-motion";
 import { Play, X, Volume2, VolumeX } from "lucide-react";
 import { formatPrice, shopifyImageUrl, type ReelProduct } from "@/lib/shopify";
 import { HScroller } from "./HScroller";
@@ -45,15 +44,13 @@ export function ReelsCarousel({ reels, label, heading }: { reels: ReelProduct[];
         ))}
       </HScroller>
 
-      <AnimatePresence>
-        {activeIndex !== null && (
-          <ReelsPlayer
-            reels={shuffled}
-            startIndex={activeIndex}
-            onClose={() => setActiveIndex(null)}
-          />
-        )}
-      </AnimatePresence>
+      {activeIndex !== null && (
+        <ReelsPlayer
+          reels={shuffled}
+          startIndex={activeIndex}
+          onClose={() => setActiveIndex(null)}
+        />
+      )}
     </section>
   );
 }
@@ -150,13 +147,7 @@ function ReelsPlayer({
   }, []);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] bg-black"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-[100] bg-black animate-[fadeIn_0.2s_ease]" onClick={onClose}>
       {/* Global controls */}
       <button
         type="button"
@@ -191,7 +182,7 @@ function ReelsPlayer({
           />
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }
 

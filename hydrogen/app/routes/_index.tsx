@@ -1,6 +1,5 @@
-import { lazy, Suspense } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "@shopify/remix-oxygen";
-import { useLoaderData, Await, useRouteError, isRouteErrorResponse } from "react-router";
+import { useLoaderData, useRouteError, isRouteErrorResponse } from "react-router";
 import { detectLanguage } from "../lib/locale";
 import { applyArImages } from "../lib/arImages";
 import { useT } from "../i18n/strings";
@@ -17,7 +16,7 @@ import { ShopByCuts } from "../components/home/ShopByCuts";
 import { ShopByOrigin, type OriginSectionData } from "../components/home/ShopByOrigin";
 import { ValueBoxesBanner, type ValueBannerData } from "../components/home/ValueBoxesBanner";
 import { RecentlyViewed } from "../components/home/RecentlyViewed";
-const ReelsCarousel = lazy(() => import("../components/home/ReelsCarousel").then((m) => ({ default: m.ReelsCarousel })));
+import { ReelsCarousel } from "../components/home/ReelsCarousel";
 import { HomeBlogSection, type BlogArticle } from "../components/home/HomeBlogSection";
 import { HomeReviews } from "../components/home/HomeReviews";
 import { fetchJudgemeStoreReviews, fetchJudgemeShopStats } from "~/lib/judgeme";
@@ -588,15 +587,12 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
   // Storefront API access per metaobject type) in parallel. For each section we prefer the
   // Storefront result when it has nodes — that means the type has access enabled and
   // translations are served. Otherwise we fall back to Admin API so nothing disappears.
-  // Typed `any[]`: Promise.all over heterogeneous API calls makes TS widen every destructured
-  // element to a union of ALL result types, which then breaks per-section property access
-  // (e.g. `data.heroBanners.nodes`). Each value is guarded with `?.` at every use site.
   const [
     heroRes, badgesRes, priceSecRes, priceTileRes, reelSecRes,
     promoRes, valueRes, colCfgRes, originRes, categoryRes,
     cutsRes, featuredRes, colListRes, reelTagged, reelItemsRes, giftRes, saleSecRes,
-    sfMetaRes, blogData, homeLayoutRes,
-  ]: any[] = await Promise.all([
+    sfMetaRes, blogData, reviewsData, shopStats, homeLayoutRes,
+  ] = await Promise.all([
     af(Q_HERO), af(Q_BADGES), af(Q_PRICE_SEC), af(Q_PRICE_TILE), af(Q_REELS_SEC),
     af(Q_PROMO), af(Q_VALUE), af(Q_COL_CFG), af(Q_ORIGIN), af(Q_CATEGORY),
     af(Q_CUTS), af(Q_FEATURED), af(Q_COL_LIST),
@@ -615,30 +611,9 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
       .catch(() => ({})),
   ]);
 
-  // Defer Judge.me outside the blocking Promise.all so it never delays TTFB
-  const reviewsPromise = fetchJudgemeStoreReviews(context.env.PUBLIC_STORE_DOMAIN, context.env.JUDGEME_API_TOKEN, 1, 9).catch(() => ({ reviews: [] as JudgemeReview[], current_page: 1, per_page: 9 }));
-  const shopStatsPromise = fetchJudgemeShopStats(context.env.PUBLIC_STORE_DOMAIN, context.env.JUDGEME_API_TOKEN).catch(() => ({ average: 0, count: 0 }));
-  const NEGATIVE_MARKER = /unfortunately|however|\bshould\s+b(?:e)?\b|downside|does ?n.?t match|not consistent|silver skin|short expiry|better quality|only good for/i;
-  const reviewsDeferred = Promise.all([reviewsPromise, shopStatsPromise]).then(([reviewsData, shopStats]) => {
-    const allStoreReviews = (reviewsData?.reviews ?? []);
-    const curatedReviews = allStoreReviews
-      .filter((r) => r.rating >= 5 && (r.body ?? "").trim().length >= 20)
-      .sort((a, b) => {
-        const neg = (r: typeof a) => (NEGATIVE_MARKER.test(r.body ?? "") ? 1 : 0);
-        return neg(a) - neg(b) || (b.body ?? "").length - (a.body ?? "").length;
-      });
-    const storeReviews = (curatedReviews.length >= 3
-      ? curatedReviews
-      : [...curatedReviews, ...allStoreReviews.filter((r) => r.rating >= 4 && !curatedReviews.includes(r))]
-    ).slice(0, 6);
-    return { storeReviews, reviewTotalCount: (reviewsData as any)?.total_count ?? 0, reviewAverage: (shopStats as any)?.average ?? 0 };
-  });
-
   // Prefer Storefront API section when it returned nodes (translated content available);
   // otherwise use Admin API section (untranslated but always complete).
-  // Returns `any`: the sections are heterogeneous metaobject shapes, and without this TS widens
-  // the return to a union of every argument type (which made `data.heroBanners.nodes` an error).
-  const sf = (sfSection: any, adminSection: any): any =>
+  const sf = (sfSection: any, adminSection: any) =>
     sfSection?.nodes?.length > 0 ? sfSection : adminSection;
 
   const data = {
@@ -777,6 +752,12 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     )
     .slice(0, 6);
 
+  // Home page shows only the BEST (5-star) reviews. Fetched with rating="5"; this filter is a
+  // safety net in case the API returns any lower ratings.
+  const storeReviews: JudgemeReview[] = ((reviewsData as any)?.reviews ?? []).filter((r: JudgemeReview) => r.rating >= 5);
+  const reviewTotalCount: number = (reviewsData as any)?.total_count ?? 0;
+  const reviewAverage: number = (shopStats as any)?.average ?? 0;
+
   const heroSlides: any[] = data?.heroBanners?.nodes ?? [];
 
   // Parse the home section layout: one key per line, in display order; lines that are
@@ -808,7 +789,9 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
     saleSection,
     saleProducts,
     blogArticles,
-    reviewsDeferred,
+    storeReviews,
+    reviewTotalCount,
+    reviewAverage,
   };
 }
 
@@ -821,7 +804,7 @@ const HOME_SECTION_ORDER = [
 ] as const;
 
 export default function Home() {
-  const { sectionOrder, heroSlides, trustBadges, featuredSection, collectionCards, promo, reelsLabel, reelsHeading, reels, categorySection, originSection, valueBanner, cutsSection, firstOrderGift, saleSection, saleProducts, blogArticles, reviewsDeferred } = useLoaderData<typeof loader>();
+  const { sectionOrder, heroSlides, trustBadges, featuredSection, collectionCards, promo, reelsLabel, reelsHeading, reels, categorySection, originSection, valueBanner, cutsSection, firstOrderGift, saleSection, saleProducts, blogArticles, storeReviews, reviewTotalCount, reviewAverage } = useLoaderData<typeof loader>();
   const t = useT();
 
   // Each section keyed so the layout metaobject can reorder / hide them. Conditional
@@ -842,12 +825,12 @@ export default function Home() {
     shop_by_category: <ShopByCategory key="shop_by_category" section={categorySection} />,
     shop_by_cuts: <ShopByCuts key="shop_by_cuts" section={cutsSection} />,
     shop_by_origin: <ShopByOrigin key="shop_by_origin" section={originSection} />,
-    reels: <Suspense fallback={null}><ReelsCarousel key="reels" reels={reels} label={reelsLabel} heading={reelsHeading} /></Suspense>,
+    reels: <ReelsCarousel key="reels" reels={reels} label={reelsLabel} heading={reelsHeading} />,
     promo: <PromoSideBySide key="promo" promo={promo} />,
     value_boxes: <ValueBoxesBanner key="value_boxes" banner={valueBanner} />,
     blog: <HomeBlogSection key="blog" articles={blogArticles} />,
     recently_viewed: <RecentlyViewed key="recently_viewed" />,
-    reviews: <Suspense key="reviews" fallback={null}><Await resolve={reviewsDeferred}>{(r) => <HomeReviews reviews={r.storeReviews} totalCount={r.reviewTotalCount} averageRating={r.reviewAverage} />}</Await></Suspense>,
+    reviews: <HomeReviews key="reviews" reviews={storeReviews} totalCount={reviewTotalCount} averageRating={reviewAverage} />,
   };
 
   // Use the metaobject-defined order when it provides at least one known key; otherwise the default.

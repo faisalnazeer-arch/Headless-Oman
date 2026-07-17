@@ -28,14 +28,13 @@ export function HScroller({ children, className, innerClassName }: HScrollerProp
   }, []);
 
   useEffect(() => {
-    const raf = requestAnimationFrame(update);
+    update();
     const el = ref.current;
     if (!el) return;
     el.addEventListener("scroll", update, { passive: true });
     const ro = new ResizeObserver(update);
     ro.observe(el);
     return () => {
-      cancelAnimationFrame(raf);
       el.removeEventListener("scroll", update);
       ro.disconnect();
     };

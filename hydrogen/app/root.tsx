@@ -705,9 +705,9 @@ var now=Date.now(),u=location.href,ref=document.referrer||'';
 var body={events:[
 {schema_id:'trekkie_storefront_page_view/1.4',payload:{appClientId:'6167201',isMerchantRequest:false,hydrogenSubchannelId:'1000153258',isPersistentCookie:true,uniqToken:y,visitToken:s,microSessionId:uuid(),microSessionCount:1,url:u,path:location.pathname,search:location.search,referrer:ref,title:document.title||'',shopId:28537323629,currency:'OMR',contentLanguage:'${locale === "ar" ? "AR" : "EN"}',pageType:pt(location.pathname)},metadata:{event_created_at_ms:now}},
 {schema_id:'custom_storefront_customer_tracking/1.2',payload:{source:'hydrogen',asset_version_id:'2026.4.2',hydrogenSubchannelId:'1000153258',is_persistent_cookie:true,deprecated_visit_token:s,unique_token:y,event_time:now,event_id:uuid(),event_source_url:u,referrer:ref,user_agent:navigator.userAgent,navigation_type:'navigate',navigation_api:'PerformanceNavigationTiming',shop_id:28537323629,currency:'OMR',ccpa_enforced:false,gdpr_enforced:false,gdpr_enforced_as_string:'false',analytics_allowed:true,marketing_allowed:true,sale_of_data_allowed:true,event_name:'page_rendered',canonical_url:u},metadata:{event_created_at_ms:now}}
-]};
+],metadata:{event_sent_at_ms:now}};
 window.__mlsEarlyPV=location.pathname+location.search;
-fetch('https://monorail-edge.shopifysvc.com/unstable/produce_batch',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body),keepalive:true}).catch(function(){window.__mlsEarlyPV=null});
+fetch('https://monorail-edge.shopifysvc.com/unstable/produce_batch',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body),keepalive:true}).then(function(r){if(!r||!r.ok){window.__mlsEarlyPV=null;return}return r.text().then(function(t){if(t&&(t.indexOf('"status":4')>-1||t.indexOf('"status":5')>-1))window.__mlsEarlyPV=null}).catch(function(){})}).catch(function(){window.__mlsEarlyPV=null});
 }catch(e){}})();` }} />
         <Links />
         {/* Google Tag Manager */}
